@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/menu_home"
+        android:icon="@drawable/ic_action_home"
+        android:title="Home"/>
+    <group android:id="@+id/group_training">
+        <item android:id="@+id/menu_reflex"
+            android:title="Reflex Training"/>
+        <item android:id="@+id/menu_strength"
+            android:title="Strength Training"/>
+    </group>
+</menu>

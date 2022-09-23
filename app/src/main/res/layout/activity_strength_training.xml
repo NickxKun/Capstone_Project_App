@@ -4,17 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".StrengthTraining">
 
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
 
     <TextView
+        android:id="@+id/text_view_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/seek_bar_1"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="Hello World!" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="230sp"
+        android:textSize="30sp"/>
+
+    <SeekBar
+        android:layout_below="@id/toolbar"
+        android:id="@+id/seek_bar_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="230sp"
+        android:layout_centerHorizontal="true"
+        android:rotation="270"/>
 
 </RelativeLayout>

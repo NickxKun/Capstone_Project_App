@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/drawable/circular_progress_bar.xml" value="0.195" />
+        <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/drawable/circular_shape.xml" value="0.195" />
         <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/activity_reflex_training.xml" value="0.2" />
         <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/activity_strength_training.xml" value="0.18802083333333333" />

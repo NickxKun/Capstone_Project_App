@@ -5,11 +5,22 @@
       <map>
         <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/drawable/circular_progress_bar.xml" value="0.195" />
         <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/drawable/circular_shape.xml" value="0.195" />
+        <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/actionbar_indeterminate_progress.xml" value="0.13645833333333332" />
+        <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/activity_btle_services.xml" value="0.24444444444444444" />
+        <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/activity_device_control.xml" value="0.12777777777777777" />
         <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/activity_reflex_training.xml" value="0.2" />
         <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/activity_strength_training.xml" value="0.18802083333333333" />
+        <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/btle_characteristics_list_item.xml" value="0.24444444444444444" />
+        <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/btle_device_list_item.xml" value="0.24444444444444444" />
+        <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/btle_service_list_item.xml" value="0.24444444444444444" />
+        <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/dialog_btle_characteristic.xml" value="0.24444444444444444" />
+        <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/gatt_services_characteristics.xml" value="0.15555555555555556" />
+        <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/listitem_device.xml" value="0.1371527777777778" />
         <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/layout/toolbar.xml" value="0.358695652173913" />
         <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/menu/example_menu.xml" value="0.30085470085470084" />
+        <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/menu/gatt_services.xml" value="0.1371527777777778" />
+        <entry key="..\:/Tools/Android/Projects/Capstone_Project_App/app/src/main/res/menu/main.xml" value="0.1371527777777778" />
       </map>
     </option>
   </component>

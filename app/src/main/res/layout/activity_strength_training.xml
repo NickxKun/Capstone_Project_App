@@ -12,21 +12,27 @@
 
     <TextView
         android:id="@+id/text_view_1"
+        android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/seek_bar_1"
+        android:layout_below="@id/strPb"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="230sp"
+        android:layout_marginTop="30sp"
         android:textSize="30sp"/>
 
-    <SeekBar
-        android:layout_below="@id/toolbar"
-        android:id="@+id/seek_bar_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="230sp"
+    <ProgressBar
+        android:layout_below="@id/strPb"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:indeterminate="false"
+        android:max="100"
+        android:minHeight="50dp"
+        android:minWidth="200dp"
+        android:progress="1"
         android:layout_centerHorizontal="true"
-        android:rotation="270"/>
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="200dp"
+        android:id="@+id/strPb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>

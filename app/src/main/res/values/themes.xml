@@ -14,8 +14,18 @@
         <!-- Customize your theme here. -->
     </style>
     <style name="buttonColor">
+
     </style>
     <style name="toolbarColor">
         <item name="android:background">@color/teal_200</item>
+    </style>
+    <style name="dropDown">
+        <item name="android:background">#eeeeee</item>
+    </style>
+    <style name="textColors">
+        <item name="android:textColor">@color/black</item>
+    </style>
+    <style name="btLogo">
+        <item name="android:src">@mipmap/ic_blue_remote</item>
     </style>
 </resources>

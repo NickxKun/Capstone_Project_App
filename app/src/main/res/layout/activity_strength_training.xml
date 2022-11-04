@@ -24,15 +24,57 @@
         android:layout_below="@id/strPb"
         style="?android:attr/progressBarStyleHorizontal"
         android:indeterminate="false"
-        android:max="100"
+        android:max="10000"
         android:minHeight="50dp"
         android:minWidth="200dp"
         android:progress="1"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="150dp"
         android:id="@+id/strPb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/text_view_2"
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/strPb2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30sp"
+        android:textSize="30sp"/>
+
+    <ProgressBar
+        android:layout_below="@+id/text_view_1"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:indeterminate="false"
+        android:max="10000"
+        android:minHeight="50dp"
+        android:minWidth="200dp"
+        android:progress="1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:id="@+id/strPb2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/startBtn"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_view_2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="Start Activity"
+        style="@style/buttonColor"/>
+    <Button
+        android:id="@+id/endBtn"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/startBtn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="Stop Activity"
+        style="@style/buttonColor"/>
 
 </RelativeLayout>

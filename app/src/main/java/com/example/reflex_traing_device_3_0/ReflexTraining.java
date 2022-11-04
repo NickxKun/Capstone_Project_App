@@ -1,10 +1,13 @@
 package com.example.reflex_traing_device_3_0;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,6 +22,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
 
+import com.clj.fastble.BleManager;
+import com.clj.fastble.callback.BleReadCallback;
+import com.clj.fastble.callback.BleWriteCallback;
+import com.clj.fastble.exception.BleException;
 
 
 public class ReflexTraining extends AppCompatActivity implements View.OnClickListener {
@@ -37,15 +44,23 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
     double avgTime;
     boolean running = false;
     boolean correctBtnPress = false;
+    private int recv_val = 0;
+    private int toSend = 16;
+    Context context;
+
+    boolean noBtnPressed = true;
 
     int mCurrent = 5;
     int mMin = 1;
     int mMax = 100;
 
+    private Handler handler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reflex_training);
+        context = getApplicationContext();
 
         Button stActBtn = this.findViewById(R.id.btnStartActivity);
         Button stopActBtn = this.findViewById(R.id.btnStopActivity);
@@ -82,9 +97,9 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         Button playBD1 = this.findViewById(R.id.btnBD1);
         Button playBD2 = this.findViewById(R.id.btnBD2);
         Button playBD3 = this.findViewById(R.id.btnBD3);
-        Button playBD4 = this.findViewById(R.id.btnBD4);
+        Button playBD4 = this.findViewById(R.id.btnBD4);/*
         Button playBD5 = this.findViewById(R.id.btnBD5);
-        Button playBD6 = this.findViewById(R.id.btnBD6);
+        Button playBD6 = this.findViewById(R.id.btnBD6);*/
 
         stActBtn.setOnClickListener(this);
         stopActBtn.setOnClickListener(this);
@@ -92,9 +107,9 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         playBD1.setOnClickListener(this);
         playBD2.setOnClickListener(this);
         playBD3.setOnClickListener(this);
-        playBD4.setOnClickListener(this);
+        playBD4.setOnClickListener(this);/*
         playBD5.setOnClickListener(this);
-        playBD6.setOnClickListener(this);
+        playBD6.setOnClickListener(this);*/
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Reflex Training");
@@ -153,7 +168,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
             case R.id.btnBD4:
                 mp = MediaPlayer.create(this, R.raw.bdl4a);
                 localMusicButtonPressed = 4;
-                break;
+                break;/*
             case R.id.btnBD5:
                 mp = MediaPlayer.create(this, R.raw.bdl5a);
                 localMusicButtonPressed = 5;
@@ -161,7 +176,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
             case R.id.btnBD6:
                 mp = MediaPlayer.create(this, R.raw.bdl6a);
                 localMusicButtonPressed = 6;
-                break;
+                break;*/
             case  R.id.btnStartActivity:
                 NUMBER_ITERATIONS = mCurrent;
                 times=NUMBER_ITERATIONS;
@@ -202,6 +217,24 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
     }
 
     private void stopReflexTraining() {
+        if (Utils.getCONNECTION_STATUS() == 1) {
+            BleManager.getInstance().write(
+                    Utils.getBleDevice(),
+                    Utils.getBluetoothGattService(),
+                    Utils.getCharacteristicWrite(),
+                    Utils.hexStringToBytes(Integer.toHexString(0)),
+                    new BleWriteCallback() {
+                        @Override
+                        public void onWriteSuccess(int current, int total, byte[] justWrite) {
+
+                        }
+
+                        @Override
+                        public void onWriteFailure(BleException exception) {
+                            Log.i("Write", exception.getDescription());
+                        }
+                    });
+        }
         running = false;
         correctBtnPress = true;
         mCountDownTimer.cancel();
@@ -211,10 +244,110 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
     private void startReflexTraining() {
 
         running = true;
-        int min = 1;
-        int max = 6;
+
+        int min = 2;
+        int max = 5;
         int selPbar = (int)(Math.random()*(max-min+1)+min);
+
         currBtn = selPbar;
+//        new Thread(new Runnable() {
+//            public void run() {
+//                while (running) {
+//                    if (false) {
+//                        BleManager.getInstance().read(
+//                                Utils.getBleDevice(),
+//                                Utils.getBluetoothGattService(),
+//                                Utils.getCharacteristicRead(),
+//                                new BleReadCallback() {
+//                                    @Override
+//                                    public void onReadSuccess(byte[] data) {
+//                                        String s = new String(data);
+//                                        recv_val = (int) Float.parseFloat(s);
+//                                    }
+//
+//                                    @Override
+//                                    public void onReadFailure(BleException exception) {
+//                                        Log.i("Read", exception.getDescription());
+//                                    }
+//                                });
+//                    }
+//                    else
+//                    {
+//                        Log.i("Strength Training", "No Devices Available");
+//                    }
+//                    handler.post(new Runnable() {
+//                        public void run() {
+//
+//                            switch (recv_val) {
+//                                case 1:
+//                                    mp = MediaPlayer.create(context, R.raw.bdl1a);
+//                                    noBtnPressed = false;
+//                                    break;
+//                                case 2:
+//                                    mp = MediaPlayer.create(context, R.raw.bdl2a);
+//                                    noBtnPressed = false;
+//                                    break;
+//                                case 3:
+//                                    mp = MediaPlayer.create(context, R.raw.bdl3a);
+//                                    noBtnPressed = false;
+//                                    break;
+//                                case 4:
+//                                    mp = MediaPlayer.create(context, R.raw.bdl4a);
+//                                    noBtnPressed = false;
+//                                    break;
+//                                default:
+//                                    noBtnPressed = true;
+//
+//                            }
+//
+//                            if (currBtn == recv_val && running && !noBtnPressed) {
+//
+//                                score++;
+//                                correctBtnPress = true;
+//                                avgTime = (avgTime * (NUMBER_ITERATIONS - times) + (2000 - recMills)) / (NUMBER_ITERATIONS - times + 1);
+//                                mCountDownTimer.cancel();
+//                                mCountDownTimer.onFinish();
+//
+//                            }
+//                            if (!noBtnPressed) {
+//                                if (mp.isPlaying()) {
+//                                    mp.release();
+//                                }
+//                                mp.setOnPreparedListener(mediaPlayer -> mp.start());
+//                                mp.setOnCompletionListener(mediaPlayer -> mp.release());
+//                            }
+//                        }
+//                    });
+//                    try {
+//                        // Sleep for 200 milliseconds.
+//                        Thread.sleep(200);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }).start();
+        // Encoding what to send
+        toSend++;
+        if (Utils.getCONNECTION_STATUS() == 1) {
+            BleManager.getInstance().write(
+                    Utils.getBleDevice(),
+                    Utils.getBluetoothGattService(),
+                    Utils.getCharacteristicWrite(),
+                    Utils.hexStringToBytes(Integer.toHexString(toSend)),
+                    new BleWriteCallback() {
+                        @Override
+                        public void onWriteSuccess(int current, int total, byte[] justWrite) {
+                            Log.i("Write", Utils.intToByteArray(toSend).toString());
+                            Log.i("Write", Integer.toHexString(toSend));
+                        }
+
+                        @Override
+                        public void onWriteFailure(BleException exception) {
+                            Log.i("Write", exception.getDescription());
+                        }
+                    });
+        }
         switch (selPbar) {
             case 2:
                 mProgressBar=findViewById(R.id.pgBar2);
@@ -225,23 +358,23 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
             case 4:
                 mProgressBar=findViewById(R.id.pgBar4);
                 break;
-            case 5:
+            /*case 5:
                 mProgressBar=findViewById(R.id.pgBar5);
                 break;
             case 6:
                 mProgressBar=findViewById(R.id.pgBar6);
-                break;
+                break;*/
             default:
                 mProgressBar=findViewById(R.id.pgBar1);
                 break;
         }
         mProgressBar.setProgressDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.circular_progress_bar_active, null));
         mProgressBar.setProgress(100);
-        mCountDownTimer=new CountDownTimer(2000,10) {
+        mCountDownTimer=new CountDownTimer(200,10) {
 
             @Override
             public void onTick(long millisUntilFinished) {
-                mProgressBar.setProgress((int)(((double)millisUntilFinished/2000*100)));
+                mProgressBar.setProgress((int)(((double)millisUntilFinished/200*100)));
                 recMills = millisUntilFinished;
             }
             @Override

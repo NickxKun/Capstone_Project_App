@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -27,12 +29,16 @@ import com.clj.fastble.data.BleDevice;
 import com.clj.fastble.exception.BleException;
 import com.example.reflex_traing_device_3_0.operation.OperationActivity;
 
-public class StrengthTraining extends AppCompatActivity {
+public class StrengthTraining extends AppCompatActivity implements View.OnClickListener {
 
     private ProgressBar progressBar;
     private int progressStatus = 0;
     private TextView textView;
+    private ProgressBar progressBar2;
+    private int progressStatus2 = 0;
+    private TextView textView2;
     private int tests = 0;
+    private boolean running = false;
     private Handler handler = new Handler();
 
     @Override
@@ -42,10 +48,18 @@ public class StrengthTraining extends AppCompatActivity {
 
         progressBar = (ProgressBar) findViewById(R.id.strPb);
         textView = findViewById(R.id.text_view_1);
+        progressBar2 = (ProgressBar) findViewById(R.id.strPb2);
+        textView2 = findViewById(R.id.text_view_2);
+
+        Button stActBtn = this.findViewById(R.id.startBtn);
+        Button stopActBtn = this.findViewById(R.id.endBtn);
+
+        stActBtn.setOnClickListener(this);
+        stopActBtn.setOnClickListener(this);
 
         new Thread(new Runnable() {
             public void run() {
-                while (tests++ < 100) {
+                while (running) {
                     if (Utils.getCONNECTION_STATUS() == 1) {
                         BleManager.getInstance().read(
                                 Utils.getBleDevice(),
@@ -56,7 +70,10 @@ public class StrengthTraining extends AppCompatActivity {
                                     public void onReadSuccess(byte[] data) {
                                         String s = new String(data);
                                         Log.i("Read", s);
-                                        progressStatus = (int) Float.parseFloat(s);
+                                        if((int) Float.parseFloat(s)%10 == 1)
+                                            progressStatus = (int) Float.parseFloat(s)/10;
+                                        if((int) Float.parseFloat(s)%10 == 2)
+                                            progressStatus2 = (int) Float.parseFloat(s)/10;
                                     }
 
                                     @Override
@@ -73,6 +90,8 @@ public class StrengthTraining extends AppCompatActivity {
                         public void run() {
                             progressBar.setProgress(progressStatus);
                             textView.setText(progressStatus+"/"+progressBar.getMax());
+                            progressBar2.setProgress(progressStatus2);
+                            textView2.setText(progressStatus2+"/"+progressBar2.getMax());
                         }
                     });
                     try {
@@ -119,5 +138,56 @@ public class StrengthTraining extends AppCompatActivity {
     public void toReflexTrainingActivity() {
         Intent switchActivityIntent = new Intent(this, ReflexTraining.class);
         startActivity(switchActivityIntent);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.startBtn:
+                if (Utils.getCONNECTION_STATUS() == 1) {
+                    BleManager.getInstance().write(
+                            Utils.getBleDevice(),
+                            Utils.getBluetoothGattService(),
+                            Utils.getCharacteristicWrite(),
+                            Utils.intToByteArray(1),
+                            new BleWriteCallback() {
+                                @Override
+                                public void onWriteSuccess(int current, int total, byte[] justWrite) {
+
+                                }
+
+                                @Override
+                                public void onWriteFailure(BleException exception) {
+                                    Log.i("Write", exception.getDescription());
+                                }
+                            });
+                }
+                running = true;
+                break;
+            case R.id.endBtn:
+                if (Utils.getCONNECTION_STATUS() == 1) {
+                    BleManager.getInstance().write(
+                            Utils.getBleDevice(),
+                            Utils.getBluetoothGattService(),
+                            Utils.getCharacteristicWrite(),
+                            Utils.intToByteArray(0),
+                            new BleWriteCallback() {
+                                @Override
+                                public void onWriteSuccess(int current, int total, byte[] justWrite) {
+
+                                }
+
+                                @Override
+                                public void onWriteFailure(BleException exception) {
+                                    Log.i("Write", exception.getDescription());
+                                }
+                            });
+                }
+                running = false;
+                break;
+            default:
+                break;
+
+        }
     }
 }

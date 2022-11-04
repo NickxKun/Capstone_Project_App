@@ -44,7 +44,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
     double avgTime;
     boolean running = false;
     boolean correctBtnPress = false;
-    private int recv_val = 0;
+    private int rec_val = 0;
     private int toSend = 16;
     Context context;
 
@@ -77,10 +77,12 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                 mCurrent = i;
                 mCurrentReps.setText(String.valueOf(mCurrent));
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
 
             }
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
@@ -94,6 +96,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         Button playBD1 = this.findViewById(R.id.btnBD1);
         Button playBD2 = this.findViewById(R.id.btnBD2);
         Button playBD3 = this.findViewById(R.id.btnBD3);
+
         stActBtn.setOnClickListener(this);
         stopActBtn.setOnClickListener(this);
 
@@ -157,14 +160,14 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                 mp = MediaPlayer.create(this, R.raw.bdl3a);
                 localMusicButtonPressed = 3;
                 break;
-            case  R.id.btnStartActivity:
+            case R.id.btnStartActivity:
                 NUMBER_ITERATIONS = mCurrent;
-                times=NUMBER_ITERATIONS;
-                score=0;
+                times = NUMBER_ITERATIONS;
+                score = 0;
                 startReflexTraining();
                 break;
-            case  R.id.btnStopActivity:
-                times=1;
+            case R.id.btnStopActivity:
+                times = 1;
                 stopReflexTraining();
                 break;
             default:
@@ -175,11 +178,11 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         // Music Button Pressed
         if (localMusicButtonPressed != -1) {
 
-            if (currBtn == localMusicButtonPressed  && running) {
+            if (currBtn == localMusicButtonPressed && running) {
 
                 score++;
                 correctBtnPress = true;
-                avgTime = (avgTime*(NUMBER_ITERATIONS-times)+(2000-recMills))/(NUMBER_ITERATIONS-times+1);
+                avgTime = (avgTime * (NUMBER_ITERATIONS - times) + (2000 - recMills)) / (NUMBER_ITERATIONS - times + 1);
                 mCountDownTimer.cancel();
                 mCountDownTimer.onFinish();
 
@@ -229,10 +232,10 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
 
         int min = 2;
         int max = 4;
-        int selPbar = (int)(Math.random()*(max-min+1)+min);
+        int randomValGen = (int) (Math.random() * (max - min + 1) + min);
 
-        currBtn = selPbar-1;
-        toSend = selPbar*10+1;
+        currBtn = randomValGen - 1;
+        toSend = randomValGen * 10 + 1;
 
         // Writing the value to elect Device
         if (Utils.getCONNECTION_STATUS() == 1) {
@@ -255,25 +258,25 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         }
 
         // select correct progress bar
-        switch (selPbar-1) {
+        switch (randomValGen - 1) {
             case 2:
-                mProgressBar=findViewById(R.id.pgBar2);
+                mProgressBar = findViewById(R.id.pgBar2);
                 break;
             case 3:
-                mProgressBar=findViewById(R.id.pgBar3);
+                mProgressBar = findViewById(R.id.pgBar3);
                 break;
             default:
-                mProgressBar=findViewById(R.id.pgBar1);
+                mProgressBar = findViewById(R.id.pgBar1);
                 break;
         }
 
         mProgressBar.setProgressDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.circular_progress_bar_active, null));
         mProgressBar.setProgress(100);
-        mCountDownTimer=new CountDownTimer(2000,10) {
+        mCountDownTimer = new CountDownTimer(2000, 10) {
 
             @Override
             public void onTick(long millisUntilFinished) {
-                mProgressBar.setProgress((int)(((double)millisUntilFinished/2000*100)));
+                mProgressBar.setProgress((int) (((double) millisUntilFinished / 2000 * 100)));
                 recMills = millisUntilFinished;
                 BleManager.getInstance().read(
                         Utils.getBleDevice(),
@@ -283,15 +286,15 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                             @Override
                             public void onReadSuccess(byte[] data) {
                                 String s = new String(data);
-                                recv_val = (int) Float.parseFloat(s);
-                                if(recv_val == currBtn) {
+                                rec_val = (int) Float.parseFloat(s);
+                                if (rec_val == currBtn) {
                                     score++;
                                     correctBtnPress = true;
-                                    avgTime = (avgTime*(NUMBER_ITERATIONS-times)+(2000-recMills))/(NUMBER_ITERATIONS-times+1);
+                                    avgTime = (avgTime * (NUMBER_ITERATIONS - times) + (2000 - recMills)) / (NUMBER_ITERATIONS - times + 1);
                                     mCountDownTimer.cancel();
                                     mCountDownTimer.onFinish();
                                 }
-                                playSound(recv_val);
+                                playSound(rec_val);
                             }
 
                             @Override
@@ -301,38 +304,36 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                         });
 
             }
-            
+
             @SuppressLint("SetTextI18n")
             @Override
             public void onFinish() {
                 //Do what you want
                 if (correctBtnPress) {
                     correctBtnPress = false;
-                }
-                else {
-                    avgTime = (avgTime*(NUMBER_ITERATIONS-times)+(2000))/(NUMBER_ITERATIONS-times+1);
+                } else {
+                    avgTime = (avgTime * (NUMBER_ITERATIONS - times) + (2000)) / (NUMBER_ITERATIONS - times + 1);
                 }
                 mProgressBar.setProgressDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.circular_progress_bar, null));
                 mProgressBar.setProgress(100);
                 if (times != 1) {
                     times--;
                     startReflexTraining();
-                }
-                else {
+                } else {
                     running = false;
-                    scoreboard.setText("Score: "+score);
-                    avgRepTim.setText("Average Response Time: "+(int)avgTime);
+                    scoreboard.setText("Score: " + score);
+                    avgRepTim.setText("Average Response Time: " + (int) avgTime);
                 }
             }
         };
         mCountDownTimer.start();
     }
 
-    private void playSound(int recv_val) {
+    private void playSound(int rec_val) {
 
         int localMusicButtonPressed = -1;
 
-        switch (recv_val) {
+        switch (rec_val) {
             case 1:
                 mp = MediaPlayer.create(this, R.raw.bdl1a);
                 localMusicButtonPressed = 1;

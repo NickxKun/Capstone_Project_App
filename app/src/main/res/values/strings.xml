@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Reflex_traing_device_3_0</string>
+    <string name="app_name">Reflexion</string>
     <string name="descr_overflow_button">Menu</string>
     <string name="ble_not_supported">BLE is not supported</string>
     <string name="label_data">Data:</string>

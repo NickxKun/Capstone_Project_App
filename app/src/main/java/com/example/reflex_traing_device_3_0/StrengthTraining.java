@@ -48,52 +48,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
         stActBtn.setOnClickListener(this);
         stopActBtn.setOnClickListener(this);
 
-        new Thread(new Runnable() {
-            public void run() {
-                while (running) {
-                    if (Utils.getCONNECTION_STATUS() == 1) {
-                        BleManager.getInstance().read(
-                                Utils.getBleDevice(),
-                                Utils.getBluetoothGattService(),
-                                Utils.getCharacteristicRead(),
-                                new BleReadCallback() {
-                                    @Override
-                                    public void onReadSuccess(byte[] data) {
-                                        String s = new String(data);
-                                        Log.i("Read", s);
-                                        if((int) Float.parseFloat(s)%10 == 1)
-                                            progressStatus = (int) Float.parseFloat(s)/10;
-                                        if((int) Float.parseFloat(s)%10 == 2)
-                                            progressStatus2 = (int) Float.parseFloat(s)/10;
-                                    }
 
-                                    @Override
-                                    public void onReadFailure(BleException exception) {
-                                        Log.i("Read", exception.getDescription());
-                                    }
-                                });
-                    }
-                    else
-                    {
-                        Log.i("Strength Training", "No Devices Available");
-                    }
-                    handler.post(new Runnable() {
-                        public void run() {
-                            progressBar.setProgress(progressStatus);
-                            textView.setText(progressStatus+"/"+progressBar.getMax());
-                            progressBar2.setProgress(progressStatus2);
-                            textView2.setText(progressStatus2+"/"+progressBar2.getMax());
-                        }
-                    });
-                    try {
-                        // Sleep for 200 milliseconds.
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Strength Training");
@@ -140,11 +95,12 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                             Utils.getBleDevice(),
                             Utils.getBluetoothGattService(),
                             Utils.getCharacteristicWrite(),
-                            Utils.intToByteArray(1),
+                            Utils.intToByteArray(18),
                             new BleWriteCallback() {
                                 @Override
                                 public void onWriteSuccess(int current, int total, byte[] justWrite) {
 
+                                    Log.i("Write", "data written");
                                 }
 
                                 @Override
@@ -154,6 +110,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                             });
                 }
                 running = true;
+                updateProgressBars();
                 break;
             case R.id.endBtn:
                 if (Utils.getCONNECTION_STATUS() == 1) {
@@ -161,7 +118,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                             Utils.getBleDevice(),
                             Utils.getBluetoothGattService(),
                             Utils.getCharacteristicWrite(),
-                            Utils.intToByteArray(0),
+                            Utils.intToByteArray(19),
                             new BleWriteCallback() {
                                 @Override
                                 public void onWriteSuccess(int current, int total, byte[] justWrite) {
@@ -180,5 +137,54 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                 break;
 
         }
+    }
+
+    private void updateProgressBars() {
+        new Thread(new Runnable() {
+            public void run() {
+                while (running) {
+                    if (Utils.getCONNECTION_STATUS() == 1) {
+                        BleManager.getInstance().read(
+                                Utils.getBleDevice(),
+                                Utils.getBluetoothGattService(),
+                                Utils.getCharacteristicRead(),
+                                new BleReadCallback() {
+                                    @Override
+                                    public void onReadSuccess(byte[] data) {
+                                        String s = new String(data);
+                                        Log.i("Read", s);
+                                        if((int) Float.parseFloat(s)%10 == 1)
+                                            progressStatus = (int) Float.parseFloat(s)/10;
+                                        if((int) Float.parseFloat(s)%10 == 2)
+                                            progressStatus2 = (int) Float.parseFloat(s)/10;
+                                    }
+
+                                    @Override
+                                    public void onReadFailure(BleException exception) {
+                                        Log.i("Read", exception.getDescription());
+                                    }
+                                });
+                    }
+                    else
+                    {
+                        Log.i("Strength Training", "No Devices Available");
+                    }
+                    handler.post(new Runnable() {
+                        public void run() {
+                            progressBar.setProgress(progressStatus);
+                            textView.setText(progressStatus+"/"+progressBar.getMax());
+                            progressBar2.setProgress(progressStatus2);
+                            textView2.setText(progressStatus2+"/"+progressBar2.getMax());
+                        }
+                    });
+                    try {
+                        // Sleep for 200 milliseconds.
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
     }
 }

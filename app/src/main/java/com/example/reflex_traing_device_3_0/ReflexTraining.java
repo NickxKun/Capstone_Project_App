@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -278,30 +279,49 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
             public void onTick(long millisUntilFinished) {
                 mProgressBar.setProgress((int) (((double) millisUntilFinished / 2000 * 100)));
                 recMills = millisUntilFinished;
-                BleManager.getInstance().read(
-                        Utils.getBleDevice(),
-                        Utils.getBluetoothGattService(),
-                        Utils.getCharacteristicRead(),
-                        new BleReadCallback() {
-                            @Override
-                            public void onReadSuccess(byte[] data) {
-                                String s = new String(data);
-                                rec_val = (int) Float.parseFloat(s);
-                                if (rec_val == currBtn) {
-                                    score++;
-                                    correctBtnPress = true;
-                                    avgTime = (avgTime * (NUMBER_ITERATIONS - times) + (2000 - recMills)) / (NUMBER_ITERATIONS - times + 1);
-                                    mCountDownTimer.cancel();
-                                    mCountDownTimer.onFinish();
-                                }
-                                playSound(rec_val);
-                            }
+                new Thread(new Runnable() {
+                    public void run() {
+                        while (!correctBtnPress && running) {
+                            if (Utils.getCONNECTION_STATUS() == 1) {
+                                BleManager.getInstance().read(
+                                        Utils.getBleDevice(),
+                                        Utils.getBluetoothGattService(),
+                                        Utils.getCharacteristicRead(),
+                                        new BleReadCallback() {
+                                            @Override
+                                            public void onReadSuccess(byte[] data) {
+                                                String s = new String(data);
+                                                Log.i("Read", s);
+                                                if (!s.equals("")) {
+                                                    if((int) Float.parseFloat(s)%10 == 1)
+                                                        rec_val = (int) Float.parseFloat(s)/10;
+                                                    if (rec_val>3) rec_val = 1;
+                                                    if (rec_val == currBtn) {
+                                                        score++;
+                                                        correctBtnPress = true;
+                                                        avgTime = (avgTime * (NUMBER_ITERATIONS - times) + (2000 - recMills)) / (NUMBER_ITERATIONS - times + 1);
+                                                        mCountDownTimer.cancel();
+                                                        mCountDownTimer.onFinish();
+                                                    }
+                                                    playSound(rec_val);
+                                                }
+                                            }
 
-                            @Override
-                            public void onReadFailure(BleException exception) {
-                                Log.i("Read", exception.getDescription());
+                                            @Override
+                                            public void onReadFailure(BleException exception) {
+                                                //Log.i("Read", exception.getDescription());
+                                            }
+
+                                        });
                             }
-                        });
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }).start();
 
             }
 

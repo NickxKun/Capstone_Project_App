@@ -3,11 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ReflexTraining">
+    tools:context=".ReflexTraining"
+    tools:ignore="HardcodedText">
 
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
+
     <!-- Bass Drums -->
 
     <Button
@@ -15,9 +17,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/btnBD4"
+        android:layout_below="@+id/btnBD2"
         android:layout_marginTop="50dp"
-        android:text="Start activity" />
+        android:text="Start activity"
+         />
 
     <Button
         android:id="@+id/btnStopActivity"
@@ -110,38 +113,11 @@
         android:layout_below="@id/toolbar"
         android:background="@drawable/btn_style_1" />
 
-    <ProgressBar
-        android:max="100"
-        android:progress="100"
-        android:id="@+id/pgBar4"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_below="@id/btnBD1"
-        android:background="@drawable/circular_shape"
-        android:indeterminate="false"
-        android:progressDrawable="@drawable/circular_progress_bar"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="30sp" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:text="🥁"
-        android:textSize="30sp"
-        style="@style/buttonColor"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:id="@+id/btnBD4"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="30sp"
-        android:layout_below="@id/btnBD1"
-        android:background="@drawable/btn_style_1" />
     <!--
         <ProgressBar
             android:max="100"
             android:progress="100"
-            android:id="@+id/pgBar5"
+            android:id="@+id/pgBar4"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -149,7 +125,8 @@
             android:background="@drawable/circular_shape"
             android:indeterminate="false"
             android:progressDrawable="@drawable/circular_progress_bar"
-            android:layout_centerHorizontal="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="30sp" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -158,50 +135,78 @@
             style="@style/buttonColor"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:id="@+id/btnBD5"
-            android:layout_centerHorizontal="true"
+            android:id="@+id/btnBD4"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="30sp"
-            android:layout_below="@id/btnBD2"
+            android:layout_below="@id/btnBD1"
             android:background="@drawable/btn_style_1" />
 
-        <ProgressBar
-            android:max="100"
-            android:progress="100"
-            android:id="@+id/pgBar6"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_below="@id/btnBD1"
-            android:background="@drawable/circular_shape"
-            android:indeterminate="false"
-            android:progressDrawable="@drawable/circular_progress_bar"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="30sp" />
+            <ProgressBar
+                android:max="100"
+                android:progress="100"
+                android:id="@+id/pgBar5"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_below="@id/btnBD1"
+                android:background="@drawable/circular_shape"
+                android:indeterminate="false"
+                android:progressDrawable="@drawable/circular_progress_bar"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:text="🥁"
+                android:textSize="30sp"
+                style="@style/buttonColor"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/btnBD5"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30sp"
+                android:layout_below="@id/btnBD2"
+                android:background="@drawable/btn_style_1" />
+
+            <ProgressBar
+                android:max="100"
+                android:progress="100"
+                android:id="@+id/pgBar6"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_below="@id/btnBD1"
+                android:background="@drawable/circular_shape"
+                android:indeterminate="false"
+                android:progressDrawable="@drawable/circular_progress_bar"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="30sp" />
 
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:text="🥁"
-            android:textSize="30sp"
-            style="@style/buttonColor"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:id="@+id/btnBD6"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="30sp"
-            android:layout_below="@id/btnBD3"
-            android:background="@drawable/btn_style_1"  />
-    -->
-        <TextView
-            android:id="@+id/score"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/btnStopActivity"
-            android:text="Score: 0"
-            android:layout_marginTop="30dp"
-            android:textSize="20dp"
-            android:layout_centerHorizontal="true" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:text="🥁"
+                android:textSize="30sp"
+                style="@style/buttonColor"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/btnBD6"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="30sp"
+                android:layout_below="@id/btnBD3"
+                android:background="@drawable/btn_style_1"  />
+        -->
+
+    <TextView
+        android:id="@+id/score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnStopActivity"
+        android:text="Score: 0"
+        android:layout_marginTop="30dp"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/avgRepTim"
@@ -210,7 +215,7 @@
         android:layout_below="@+id/score"
         android:text="Average Response Time: 0"
         android:layout_marginTop="10dp"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:layout_centerHorizontal="true" />
 
     <SeekBar
@@ -228,6 +233,5 @@
         android:text="5"
         android:layout_below="@+id/sbBarSetReps"
         android:layout_centerHorizontal="true"/>
-
 
 </RelativeLayout>

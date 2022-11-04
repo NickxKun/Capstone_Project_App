@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StrengthTraining">
+    tools:context=".StrengthTraining"
+    tools:ignore="HardcodedText">
 
     <include
         android:id="@+id/toolbar"
@@ -34,6 +34,7 @@
         android:id="@+id/strPb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+
     <TextView
         android:id="@+id/text_view_2"
         android:text=""
@@ -67,6 +68,7 @@
         android:layout_marginTop="30dp"
         android:text="Start Activity"
         style="@style/buttonColor"/>
+
     <Button
         android:id="@+id/endBtn"
         android:layout_width="180dp"

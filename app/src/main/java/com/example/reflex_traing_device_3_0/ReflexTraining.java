@@ -45,6 +45,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
     double avgTime;
     boolean running = false;
     boolean correctBtnPress = false;
+    boolean isWriting = false;
     private int rec_val = 0;
     private int toSend = 16;
     Context context;
@@ -201,29 +202,11 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
     }
 
     private void stopReflexTraining() {
-
-        if (Utils.getCONNECTION_STATUS() == 1) {
-            BleManager.getInstance().write(
-                    Utils.getBleDevice(),
-                    Utils.getBluetoothGattService(),
-                    Utils.getCharacteristicWrite(),
-                    Utils.hexStringToBytes(Integer.toHexString(16)),
-                    new BleWriteCallback() {
-                        @Override
-                        public void onWriteSuccess(int current, int total, byte[] justWrite) {
-
-                        }
-
-                        @Override
-                        public void onWriteFailure(BleException exception) {
-                            Log.i("Write", exception.getDescription());
-                        }
-                    });
+        if(running){
+            running = false;
+            mCountDownTimer.cancel();
+            mCountDownTimer.onFinish();
         }
-        running = false;
-        correctBtnPress = true;
-        mCountDownTimer.cancel();
-        mCountDownTimer.onFinish();
 
     }
 
@@ -231,35 +214,77 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
 
         running = true;
 
-        int min = 2;
-        int max = 4;
+        int min = 1;
+        int max = 3;
         int randomValGen = (int) (Math.random() * (max - min + 1) + min);
 
-        currBtn = randomValGen - 1;
-        toSend = randomValGen * 10 + 1;
+        currBtn = randomValGen;
+        toSend = randomValGen + 20;
 
-        // Writing the value to elect Device
-        if (Utils.getCONNECTION_STATUS() == 1) {
-            BleManager.getInstance().write(
-                    Utils.getBleDevice(),
-                    Utils.getBluetoothGattService(),
-                    Utils.getCharacteristicWrite(),
-                    Utils.hexStringToBytes(Integer.toHexString(toSend)),
-                    new BleWriteCallback() {
-                        @Override
-                        public void onWriteSuccess(int current, int total, byte[] justWrite) {
-                            Log.i("Write", Integer.toHexString(toSend));
-                        }
-
-                        @Override
-                        public void onWriteFailure(BleException exception) {
-                            Log.i("Write", exception.getDescription());
-                        }
-                    });
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        if (Utils.getCONNECTION_STATUS() == 1) {
+                    BleManager.getInstance().write(
+                            Utils.getBleDevice(),
+                            Utils.getBluetoothGattService(),
+                            Utils.getCharacteristicWrite(),
+                            Utils.hexStringToBytes(Integer.toHexString(30)),
+                            new BleWriteCallback() {
+                                @Override
+                                public void onWriteSuccess(int current, int total, byte[] justWrite) {
+                                    Log.i("Write30", String.valueOf(30));
+                                }
+
+                                @Override
+                                public void onWriteFailure(BleException exception) {
+                                    Log.i("Write30", exception.getDescription());
+                                }
+                            });
+                }
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+        new Thread(new Runnable() {
+            public void run() {
+
+                isWriting = true;
+                if (Utils.getCONNECTION_STATUS() == 1) {
+                    BleManager.getInstance().write(
+                            Utils.getBleDevice(),
+                            Utils.getBluetoothGattService(),
+                            Utils.getCharacteristicWrite(),
+                            Utils.hexStringToBytes(Integer.toHexString(toSend)),
+                            new BleWriteCallback() {
+                                @Override
+                                public void onWriteSuccess(int current, int total, byte[] justWrite) {
+                                    Log.i("Write", String.valueOf(toSend));
+                                }
+
+                                @Override
+                                public void onWriteFailure(BleException exception) {
+                                    Log.i("Write", exception.getDescription());
+                                }
+                            });
+                }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                isWriting = false;
+
+            }
+        }).start();
+
 
         // select correct progress bar
-        switch (randomValGen - 1) {
+        switch (randomValGen) {
             case 2:
                 mProgressBar = findViewById(R.id.pgBar2);
                 break;
@@ -273,14 +298,14 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
 
         mProgressBar.setProgressDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.circular_progress_bar_active, null));
         mProgressBar.setProgress(100);
-        mCountDownTimer = new CountDownTimer(2000, 10) {
+        mCountDownTimer = new CountDownTimer(2000, 25) {
 
             @Override
             public void onTick(long millisUntilFinished) {
                 mProgressBar.setProgress((int) (((double) millisUntilFinished / 2000 * 100)));
                 recMills = millisUntilFinished;
 
-                if (Utils.getCONNECTION_STATUS() == 1) {
+                if (Utils.getCONNECTION_STATUS() == 1 && !isWriting) {
                     BleManager.getInstance().read(
                             Utils.getBleDevice(),
                             Utils.getBluetoothGattService(),
@@ -289,19 +314,15 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                                 @Override
                                 public void onReadSuccess(byte[] data) {
                                     String s = new String(data);
-                                    Log.i("Read", s);
                                     if (!s.equals("")) {
-                                        if((int) Float.parseFloat(s)%10 == 1)
-                                            rec_val = (int) Float.parseFloat(s)/10;
+                                        Log.i("Read", s);
+                                        rec_val = (int) Float.parseFloat(s);
                                         if (rec_val>3) rec_val = 1;
                                         if (rec_val == currBtn) {
                                             score++;
                                             correctBtnPress = true;
-                                            avgTime = (avgTime * (NUMBER_ITERATIONS - times) + (2000 - recMills)) / (NUMBER_ITERATIONS - times + 1);
-                                            mCountDownTimer.cancel();
-                                            mCountDownTimer.onFinish();
                                         }
-                                        playSound(rec_val);
+                                       // playSound(rec_val);
                                     }
                                 }
 
@@ -310,6 +331,12 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                                     //Log.i("Read", exception.getDescription());
                                 }
                             });
+                }
+
+                if (correctBtnPress) {
+                    avgTime = (avgTime * (NUMBER_ITERATIONS - times) + (2000 - recMills)) / (NUMBER_ITERATIONS - times + 1);
+                    mCountDownTimer.cancel();
+                    mCountDownTimer.onFinish();
                 }
 
             }
@@ -325,6 +352,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                 }
                 mProgressBar.setProgressDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.circular_progress_bar, null));
                 mProgressBar.setProgress(100);
+
                 if (times != 1) {
                     times--;
                     startReflexTraining();

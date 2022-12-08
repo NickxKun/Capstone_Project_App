@@ -9,7 +9,8 @@ import com.clj.fastble.data.BleDevice;
 public class Utils {
 
     private static int CONNECTION_STATUS = 0;
-    private static BleDevice bleDevice;
+    private static int devCount = -1;
+    private static BleDevice[] bleDevice;
     private static String bluetoothGattService = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
     private static String characteristicRead   = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
     private static String characteristicWrite  = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
@@ -17,10 +18,15 @@ public class Utils {
     public static int getCONNECTION_STATUS() { return CONNECTION_STATUS; }
     public static void setCONNECTION_STATUS(int connection_status) { CONNECTION_STATUS = connection_status; }
 
-    public static BleDevice getBleDevice() {
-        return bleDevice;
+    public static BleDevice getBleDevice(int devNo) {
+        return bleDevice[devNo];
     }
-    public static void setBleDevice(BleDevice device) { bleDevice = device; }
+    public static void setBleDevice(BleDevice device, boolean isNew) {
+        if (isNew)
+            bleDevice[++devCount] = device;
+        else
+            bleDevice[devCount] = device;
+    }
 
 
     public static String getBluetoothGattService() {
@@ -94,6 +100,10 @@ public class Utils {
 
     public static byte charToByte(char c) {
         return (byte) "0123456789ABCDEF".indexOf(c);
+    }
+
+    public Utils() {
+        bleDevice = new BleDevice[10];
     }
 
 

@@ -7,7 +7,6 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -226,9 +225,11 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (Utils.getCONNECTION_STATUS() == 1) {
+
+        for (final int[] i = {0}; i[0] < 3; )
+            if (Utils.getCONNECTION_STATUS() == 1) {
                     BleManager.getInstance().write(
-                            Utils.getBleDevice(),
+                            Utils.getBleDevice(currBtn-1),
                             Utils.getBluetoothGattService(),
                             Utils.getCharacteristicWrite(),
                             Utils.hexStringToBytes(Integer.toHexString(30)),
@@ -236,51 +237,50 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                                 @Override
                                 public void onWriteSuccess(int current, int total, byte[] justWrite) {
                                     Log.i("Write30", String.valueOf(30));
+                                    i[0]++;
                                 }
 
                                 @Override
                                 public void onWriteFailure(BleException exception) {
                                     Log.i("Write30", exception.getDescription());
+                                    i[0]++;
                                 }
                             });
                 }
+
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-        new Thread(new Runnable() {
-            public void run() {
+        isWriting = true;
+        if (Utils.getCONNECTION_STATUS() == 1) {
+            BleManager.getInstance().write(
+                    Utils.getBleDevice(currBtn-1),
+                    Utils.getBluetoothGattService(),
+                    Utils.getCharacteristicWrite(),
+                    Utils.hexStringToBytes(Integer.toHexString(toSend)),
+                    new BleWriteCallback() {
+                        @Override
+                        public void onWriteSuccess(int current, int total, byte[] justWrite) {
+                            Log.i("Write", String.valueOf(toSend));
+                            isWriting = false;
+                        }
 
-                isWriting = true;
-                if (Utils.getCONNECTION_STATUS() == 1) {
-                    BleManager.getInstance().write(
-                            Utils.getBleDevice(),
-                            Utils.getBluetoothGattService(),
-                            Utils.getCharacteristicWrite(),
-                            Utils.hexStringToBytes(Integer.toHexString(toSend)),
-                            new BleWriteCallback() {
-                                @Override
-                                public void onWriteSuccess(int current, int total, byte[] justWrite) {
-                                    Log.i("Write", String.valueOf(toSend));
-                                }
+                        @Override
+                        public void onWriteFailure(BleException exception) {
+                            Log.i("Write", exception.getDescription());
+                            isWriting = false;
+                        }
+                    });
+        }
 
-                                @Override
-                                public void onWriteFailure(BleException exception) {
-                                    Log.i("Write", exception.getDescription());
-                                }
-                            });
-                }
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                isWriting = false;
-
-            }
-        }).start();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
 
         // select correct progress bar
@@ -305,9 +305,10 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                 mProgressBar.setProgress((int) (((double) millisUntilFinished / 2000 * 100)));
                 recMills = millisUntilFinished;
 
-                if (Utils.getCONNECTION_STATUS() == 1 && !isWriting) {
+                for (final int[] i = {0}; i[0] < 3; )
+                    if (Utils.getCONNECTION_STATUS() == 1 && !isWriting) {
                     BleManager.getInstance().read(
-                            Utils.getBleDevice(),
+                            Utils.getBleDevice(i[0]),
                             Utils.getBluetoothGattService(),
                             Utils.getCharacteristicRead(),
                             new BleReadCallback() {
@@ -324,11 +325,13 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                                         }
                                        // playSound(rec_val);
                                     }
+                                    i[0]++;
                                 }
 
                                 @Override
                                 public void onReadFailure(BleException exception) {
-                                    //Log.i("Read", exception.getDescription());
+                                    Log.i("Read", exception.getDescription());
+                                    i[0]++;
                                 }
                             });
                 }

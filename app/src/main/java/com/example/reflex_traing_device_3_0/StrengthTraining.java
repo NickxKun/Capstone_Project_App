@@ -92,7 +92,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
             case R.id.startBtn:
                 if (Utils.getCONNECTION_STATUS() == 1) {
                     BleManager.getInstance().write(
-                            Utils.getBleDevice(),
+                            Utils.getBleDevice(0),
                             Utils.getBluetoothGattService(),
                             Utils.getCharacteristicWrite(),
                             Utils.intToByteArray(18),
@@ -115,7 +115,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
             case R.id.endBtn:
                 if (Utils.getCONNECTION_STATUS() == 1) {
                     BleManager.getInstance().write(
-                            Utils.getBleDevice(),
+                            Utils.getBleDevice(0),
                             Utils.getBluetoothGattService(),
                             Utils.getCharacteristicWrite(),
                             Utils.intToByteArray(19),
@@ -145,7 +145,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                 while (running) {
                     if (Utils.getCONNECTION_STATUS() == 1) {
                         BleManager.getInstance().read(
-                                Utils.getBleDevice(),
+                                Utils.getBleDevice(0),
                                 Utils.getBluetoothGattService(),
                                 Utils.getCharacteristicRead(),
                                 new BleReadCallback() {

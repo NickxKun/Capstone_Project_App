@@ -265,7 +265,7 @@ public class Bluetooth extends AppCompatActivity implements View.OnClickListener
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
                 progressDialog.dismiss();
                 Utils.setCONNECTION_STATUS(1);
-                Utils.setBleDevice(bleDevice);
+                Utils.setBleDevice(bleDevice, true);
                 mDeviceAdapter.addDevice(bleDevice);
                 mDeviceAdapter.notifyDataSetChanged();
             }

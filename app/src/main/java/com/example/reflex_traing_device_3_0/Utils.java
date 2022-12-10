@@ -8,26 +8,67 @@ import com.clj.fastble.data.BleDevice;
 
 public class Utils {
 
-    private static int CONNECTION_STATUS = 0;
-    private static int devCount = -1;
-    private static BleDevice[] bleDevice;
+    private static int[] CONNECTION_STATUS = {0,0,0,0};
+    private static int devCount = 0;
+    private static BleDevice bleDevice1;
+    private static BleDevice bleDevice2;
+    private static BleDevice bleDevice3;
+    private static BleDevice bleDevice4;
     private static String bluetoothGattService = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
     private static String characteristicRead   = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
     private static String characteristicWrite  = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
 
-    public static int getCONNECTION_STATUS() { return CONNECTION_STATUS; }
-    public static void setCONNECTION_STATUS(int connection_status) { CONNECTION_STATUS = connection_status; }
+    public static int getDevCount() {
+        return devCount;
+    }
+    public static void setDevCount(int devCount) {
+        Utils.devCount = devCount;
+    }
+
+    public static int lookUpBLEDevice(BleDevice bleDevice) {
+        if (bleDevice2 == bleDevice)
+            return 1;
+        if (bleDevice3 == bleDevice)
+            return 2;
+        if (bleDevice4 == bleDevice)
+            return 3;
+        return 0;
+    }
+
+    public static int getCONNECTION_STATUS(int devNo) {
+        return CONNECTION_STATUS[devNo];
+    }
+    public static void setCONNECTION_STATUS(int connection_status, int devNo) { CONNECTION_STATUS[devNo] = connection_status; }
 
     public static BleDevice getBleDevice(int devNo) {
-        return bleDevice[devNo];
+        switch (devNo) {
+            case 1:
+                return bleDevice2;
+            case 2:
+                return bleDevice3;
+            case 3:
+                return bleDevice4;
+            default:
+                return bleDevice1;
+        }
     }
     public static void setBleDevice(BleDevice device, boolean isNew) {
         if (isNew)
-            bleDevice[++devCount] = device;
-        else
-            bleDevice[devCount] = device;
+            switch (devCount++) {
+                case 1:
+                    bleDevice2=device;
+                    break;
+                case 2:
+                    bleDevice3=device;
+                    break;
+                case 3:
+                    bleDevice4=device;
+                    break;
+                default:
+                    bleDevice1=device;
+                    break;
+            }
     }
-
 
     public static String getBluetoothGattService() {
         return bluetoothGattService;
@@ -101,10 +142,5 @@ public class Utils {
     public static byte charToByte(char c) {
         return (byte) "0123456789ABCDEF".indexOf(c);
     }
-
-    public Utils() {
-        bleDevice = new BleDevice[10];
-    }
-
 
 }

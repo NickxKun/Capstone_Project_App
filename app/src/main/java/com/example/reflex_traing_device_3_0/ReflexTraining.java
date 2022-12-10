@@ -220,42 +220,41 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         currBtn = randomValGen;
         toSend = randomValGen + 20;
 
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        if (Utils.getCONNECTION_STATUS(currBtn-1) == 1) {
 
-        for (final int[] i = {0}; i[0] < 3; )
-            if (Utils.getCONNECTION_STATUS() == 1) {
-                    BleManager.getInstance().write(
-                            Utils.getBleDevice(currBtn-1),
-                            Utils.getBluetoothGattService(),
-                            Utils.getCharacteristicWrite(),
-                            Utils.hexStringToBytes(Integer.toHexString(30)),
-                            new BleWriteCallback() {
-                                @Override
-                                public void onWriteSuccess(int current, int total, byte[] justWrite) {
-                                    Log.i("Write30", String.valueOf(30));
-                                    i[0]++;
-                                }
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-                                @Override
-                                public void onWriteFailure(BleException exception) {
-                                    Log.i("Write30", exception.getDescription());
-                                    i[0]++;
-                                }
-                            });
-                }
+            for (final int[] i = {0}; i[0] < 3; )
+                        BleManager.getInstance().write(
+                                Utils.getBleDevice(currBtn-1),
+                                Utils.getBluetoothGattService(),
+                                Utils.getCharacteristicWrite(),
+                                Utils.hexStringToBytes(Integer.toHexString(30)),
+                                new BleWriteCallback() {
+                                    @Override
+                                    public void onWriteSuccess(int current, int total, byte[] justWrite) {
+                                        Log.i("Write30", String.valueOf(30));
+                                        i[0]++;
+                                    }
 
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                                    @Override
+                                    public void onWriteFailure(BleException exception) {
+                                        Log.i("Write30", exception.getDescription());
+                                        i[0]++;
+                                    }
+                                });
 
-        isWriting = true;
-        if (Utils.getCONNECTION_STATUS() == 1) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+            isWriting = true;
             BleManager.getInstance().write(
                     Utils.getBleDevice(currBtn-1),
                     Utils.getBluetoothGattService(),
@@ -274,14 +273,14 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                             isWriting = false;
                         }
                     });
-        }
 
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
+        }
 
         // select correct progress bar
         switch (randomValGen) {
@@ -306,8 +305,8 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                 recMills = millisUntilFinished;
 
                 for (final int[] i = {0}; i[0] < 3; )
-                    if (Utils.getCONNECTION_STATUS() == 1 && !isWriting) {
-                    BleManager.getInstance().read(
+                    if (Utils.getCONNECTION_STATUS(i[0]) == 1 && !isWriting) {
+                        BleManager.getInstance().read(
                             Utils.getBleDevice(i[0]),
                             Utils.getBluetoothGattService(),
                             Utils.getCharacteristicRead(),
@@ -347,7 +346,6 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
             @SuppressLint("SetTextI18n")
             @Override
             public void onFinish() {
-                //Do what you want
                 if (correctBtnPress) {
                     correctBtnPress = false;
                 } else {

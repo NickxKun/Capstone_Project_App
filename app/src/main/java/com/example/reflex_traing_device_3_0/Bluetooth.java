@@ -264,7 +264,7 @@ public class Bluetooth extends AppCompatActivity implements View.OnClickListener
             @Override
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
                 progressDialog.dismiss();
-                Utils.setCONNECTION_STATUS(1);
+                Utils.setCONNECTION_STATUS(1, Utils.getDevCount());
                 Utils.setBleDevice(bleDevice, true);
                 mDeviceAdapter.addDevice(bleDevice);
                 mDeviceAdapter.notifyDataSetChanged();
@@ -273,7 +273,7 @@ public class Bluetooth extends AppCompatActivity implements View.OnClickListener
             @Override
             public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status) {
                 progressDialog.dismiss();
-                Utils.setCONNECTION_STATUS(0);
+                Utils.setCONNECTION_STATUS(0, Utils.lookUpBLEDevice(bleDevice));
 
                 mDeviceAdapter.removeDevice(bleDevice);
                 mDeviceAdapter.notifyDataSetChanged();

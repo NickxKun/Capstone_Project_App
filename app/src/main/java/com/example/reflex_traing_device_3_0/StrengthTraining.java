@@ -90,7 +90,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.startBtn:
-                if (Utils.getCONNECTION_STATUS() == 1) {
+                if (Utils.getCONNECTION_STATUS(0) == 1) {
                     BleManager.getInstance().write(
                             Utils.getBleDevice(0),
                             Utils.getBluetoothGattService(),
@@ -113,7 +113,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                 updateProgressBars();
                 break;
             case R.id.endBtn:
-                if (Utils.getCONNECTION_STATUS() == 1) {
+                if (Utils.getCONNECTION_STATUS(0) == 1) {
                     BleManager.getInstance().write(
                             Utils.getBleDevice(0),
                             Utils.getBluetoothGattService(),
@@ -143,7 +143,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
         new Thread(new Runnable() {
             public void run() {
                 while (running) {
-                    if (Utils.getCONNECTION_STATUS() == 1) {
+                    if (Utils.getCONNECTION_STATUS(0) == 1) {
                         BleManager.getInstance().read(
                                 Utils.getBleDevice(0),
                                 Utils.getBluetoothGattService(),

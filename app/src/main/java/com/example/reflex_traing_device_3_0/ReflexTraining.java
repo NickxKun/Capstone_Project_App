@@ -284,28 +284,30 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                                         if (!s.equals("")) {
                                             Log.i("Read", s);
                                             rec_val = (int) Float.parseFloat(s);
-                                            if (rec_val > 3) rec_val = 1;
-                                            if (rec_val == currBtn) {
-                                                score++;
-                                                correctBtnPress = true;
-                                            }
-                                            // playSound(rec_val);
-                                            BleManager.getInstance().write(
-                                                    Utils.getBleDevice(currDevRead),
-                                                    Utils.getBluetoothGattService(),
-                                                    Utils.getCharacteristicWrite(),
-                                                    Utils.hexStringToBytes(Integer.toHexString(30)),
-                                                    new BleWriteCallback() {
-                                                        @Override
-                                                        public void onWriteSuccess(int current, int total, byte[] justWrite) {
-                                                            Log.i("Write30Read", String.valueOf(30));
-                                                        }
+                                            if (rec_val != 40) {
+                                                if (rec_val > 3) rec_val = 1;
+                                                if (rec_val == currBtn) {
+                                                    score++;
+                                                    correctBtnPress = true;
+                                                }
+                                                // playSound(rec_val);
+                                                BleManager.getInstance().write(
+                                                        Utils.getBleDevice(currDevRead),
+                                                        Utils.getBluetoothGattService(),
+                                                        Utils.getCharacteristicWrite(),
+                                                        Utils.hexStringToBytes(Integer.toHexString(30)),
+                                                        new BleWriteCallback() {
+                                                            @Override
+                                                            public void onWriteSuccess(int current, int total, byte[] justWrite) {
+                                                                Log.i("Write30Read", String.valueOf(30));
+                                                            }
 
-                                                        @Override
-                                                        public void onWriteFailure(BleException exception) {
-                                                            Log.i("Write30Read", exception.getDescription());
-                                                        }
-                                                    });
+                                                            @Override
+                                                            public void onWriteFailure(BleException exception) {
+                                                                Log.i("Write30Read", exception.getDescription());
+                                                            }
+                                                        });
+                                            }
                                         }
                                     }
 

@@ -226,8 +226,8 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                e.printStackTrace();
+            }
 
             isWriting = true;
             BleManager.getInstance().write(
@@ -341,6 +341,11 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
 
                 if (times != 1) {
                     times--;
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     startReflexTraining();
                 } else {
                     running = false;

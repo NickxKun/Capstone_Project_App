@@ -38,7 +38,22 @@ public class Utils {
     public static int getCONNECTION_STATUS(int devNo) {
         return CONNECTION_STATUS[devNo];
     }
-    public static void setCONNECTION_STATUS(int connection_status, int devNo) { CONNECTION_STATUS[devNo] = connection_status; }
+    public static void setCONNECTION_STATUS(int devNo, int status) {
+        switch (devNo) {
+            case 0:
+                CONNECTION_STATUS[0] = status;
+                break;
+            case 1:
+                CONNECTION_STATUS[1] = status;
+                break;
+            case 2:
+                CONNECTION_STATUS[3] = status;
+                break;
+            case 3:
+                CONNECTION_STATUS[4] = status;
+                break;
+        }
+    }
 
     public static BleDevice getBleDevice(int devNo) {
         switch (devNo) {
@@ -52,22 +67,20 @@ public class Utils {
                 return bleDevice1;
         }
     }
-    public static void setBleDevice(BleDevice device, boolean isNew) {
-        if (isNew)
-            switch (devCount++) {
-                case 1:
-                    bleDevice2=device;
-                    break;
-                case 2:
-                    bleDevice3=device;
-                    break;
-                case 3:
-                    bleDevice4=device;
-                    break;
-                default:
-                    bleDevice1=device;
-                    break;
-            }
+    public static void setBleDevice(BleDevice device) {
+        if (CONNECTION_STATUS[0] == 0) {
+            bleDevice1 = device;
+            CONNECTION_STATUS[0] = 1;
+        } else if (CONNECTION_STATUS[1] == 0) {
+            bleDevice2 = device;
+            CONNECTION_STATUS[1] = 1;
+        } else if (CONNECTION_STATUS[2] == 0) {
+            bleDevice3 = device;
+            CONNECTION_STATUS[2] = 1;
+        } else if (CONNECTION_STATUS[3] == 0) {
+            bleDevice4 = device;
+            CONNECTION_STATUS[3] = 1;
+        }
     }
 
     public static String getBluetoothGattService() {

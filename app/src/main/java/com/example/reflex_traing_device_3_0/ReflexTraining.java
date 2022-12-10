@@ -52,6 +52,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
     int mCurrent = 5;
     int mMin = 1;
     int mMax = 100;
+    int currDevRead = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,6 +223,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
 
         if (Utils.getCONNECTION_STATUS(currBtn-1) == 1) {
 
+            /*
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
@@ -229,12 +231,12 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
             }
 
             for (final int[] i = {0}; i[0] < 3; )
-                        BleManager.getInstance().write(
-                                Utils.getBleDevice(currBtn-1),
-                                Utils.getBluetoothGattService(),
-                                Utils.getCharacteristicWrite(),
-                                Utils.hexStringToBytes(Integer.toHexString(30)),
-                                new BleWriteCallback() {
+                BleManager.getInstance().write(
+                        Utils.getBleDevice(currBtn-1),
+                        Utils.getBluetoothGattService(),
+                        Utils.getCharacteristicWrite(),
+                        Utils.hexStringToBytes(Integer.toHexString(30)),
+                        new BleWriteCallback() {
                                     @Override
                                     public void onWriteSuccess(int current, int total, byte[] justWrite) {
                                         Log.i("Write30", String.valueOf(30));
@@ -247,6 +249,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                                         i[0]++;
                                     }
                                 });
+            */
 
             try {
                 Thread.sleep(200);
@@ -304,37 +307,53 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                 mProgressBar.setProgress((int) (((double) millisUntilFinished / 2000 * 100)));
                 recMills = millisUntilFinished;
 
-                for (final int[] i = {0}; i[0] < 3; )
-                    if (Utils.getCONNECTION_STATUS(i[0]) == 1 && !isWriting) {
+                do {
+                    if (Utils.getCONNECTION_STATUS(currDevRead) == 1 && !isWriting) {
                         BleManager.getInstance().read(
-                            Utils.getBleDevice(i[0]),
-                            Utils.getBluetoothGattService(),
-                            Utils.getCharacteristicRead(),
-                            new BleReadCallback() {
-                                @Override
-                                public void onReadSuccess(byte[] data) {
-                                    String s = new String(data);
-                                    if (!s.equals("")) {
-                                        Log.i("Read", s);
-                                        rec_val = (int) Float.parseFloat(s);
-                                        if (rec_val>3) rec_val = 1;
-                                        if (rec_val == currBtn) {
-                                            score++;
-                                            correctBtnPress = true;
+                                Utils.getBleDevice(currDevRead),
+                                Utils.getBluetoothGattService(),
+                                Utils.getCharacteristicRead(),
+                                new BleReadCallback() {
+                                    @Override
+                                    public void onReadSuccess(byte[] data) {
+                                        String s = new String(data);
+                                        if (!s.equals("")) {
+                                            Log.i("Read", s);
+                                            rec_val = (int) Float.parseFloat(s);
+                                            if (rec_val > 3) rec_val = 1;
+                                            if (rec_val == currBtn) {
+                                                score++;
+                                                correctBtnPress = true;
+                                            }
+                                            // playSound(rec_val);
+                                            BleManager.getInstance().write(
+                                                    Utils.getBleDevice(currDevRead),
+                                                    Utils.getBluetoothGattService(),
+                                                    Utils.getCharacteristicWrite(),
+                                                    Utils.hexStringToBytes(Integer.toHexString(30)),
+                                                    new BleWriteCallback() {
+                                                        @Override
+                                                        public void onWriteSuccess(int current, int total, byte[] justWrite) {
+                                                            Log.i("Write30Read", String.valueOf(30));
+                                                        }
+
+                                                        @Override
+                                                        public void onWriteFailure(BleException exception) {
+                                                            Log.i("Write30Read", exception.getDescription());
+                                                        }
+                                                    });
                                         }
-                                       // playSound(rec_val);
                                     }
-                                    i[0]++;
-                                }
 
-                                @Override
-                                public void onReadFailure(BleException exception) {
-                                    Log.i("Read", exception.getDescription());
-                                    i[0]++;
-                                }
-                            });
-                }
+                                    @Override
+                                    public void onReadFailure(BleException exception) {
+                                        Log.i("Read", exception.getDescription());
+                                    }
+                                });
+                    }
+                }  while (++currDevRead<3);
 
+                currDevRead = 0;
                 if (correctBtnPress) {
                     avgTime = (avgTime * (NUMBER_ITERATIONS - times) + (2000 - recMills)) / (NUMBER_ITERATIONS - times + 1);
                     mCountDownTimer.cancel();

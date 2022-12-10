@@ -46,7 +46,6 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
     boolean correctBtnPress = false;
     boolean isWriting = false;
     private int rec_val = 0;
-    private int toSend = 16;
     Context context;
 
     int mCurrent = 5;
@@ -219,7 +218,6 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         int randomValGen = (int) (Math.random() * (max - min + 1) + min);
 
         currBtn = randomValGen;
-        toSend = randomValGen + 20;
 
         if (Utils.getCONNECTION_STATUS(currBtn-1) == 1) {
 
@@ -234,11 +232,11 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                     Utils.getBleDevice(currBtn-1),
                     Utils.getBluetoothGattService(),
                     Utils.getCharacteristicWrite(),
-                    Utils.hexStringToBytes(Integer.toHexString(toSend)),
+                    Utils.hexStringToBytes(Integer.toHexString(20)),
                     new BleWriteCallback() {
                         @Override
                         public void onWriteSuccess(int current, int total, byte[] justWrite) {
-                            Log.i("Write", String.valueOf(toSend));
+                            Log.i("Write", String.valueOf(20));
                             isWriting = false;
                         }
 

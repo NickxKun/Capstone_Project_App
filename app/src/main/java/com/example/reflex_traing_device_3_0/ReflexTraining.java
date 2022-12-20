@@ -7,9 +7,8 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -18,14 +17,19 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.clj.fastble.BleManager;
 import com.clj.fastble.callback.BleReadCallback;
 import com.clj.fastble.callback.BleWriteCallback;
 import com.clj.fastble.exception.BleException;
+import com.google.android.material.navigation.NavigationView;
 
 
 @SuppressLint("NonConstantResourceId")
@@ -36,6 +40,9 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
     CountDownTimer mCountDownTimer;
     TextView scoreboard;
     TextView avgRepTim;
+    DrawerLayout drawerLayout;
+    NavigationView navigationView;
+    ActionBarDrawerToggle drawerToggle;
     int times;
     int currBtn;
     int score;
@@ -58,6 +65,60 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reflex_training);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean isActivitySwitch = false;
+                        switch (item.getItemId())
+                        {
+                            case R.id.menu_home:
+                                toHomeActivity();
+                                isActivitySwitch = true;
+                                break;
+                            case R.id.bluetooth:
+                                toBleActivity();
+                                isActivitySwitch = true;
+                                break;
+                            case R.id.stats:
+                                Utils.toast(ReflexTraining.this, "Stats Selected");
+                                break;
+                            case R.id.info:
+                                Utils.toast(ReflexTraining.this, "Info Selected");
+                                break;
+                            case R.id.achievements:
+                                Utils.toast(ReflexTraining.this, "Achievements Selected");
+                                break;
+                            case R.id.menu_reflex:
+                                Utils.toast(ReflexTraining.this, "You are here!");
+                                break;
+                            case R.id.menu_strength:
+                                toStrengthTrainingActivity();
+                                isActivitySwitch = true;
+                                break;
+                        }
+                        if (isActivitySwitch)
+                            finish();
+                    }
+                });
+                return false;
+            }
+        });
+        navigationView.bringToFront();
+
         context = getApplicationContext();
 
         Button stActBtn = this.findViewById(R.id.btnStartActivity);
@@ -105,31 +166,24 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         playBD2.setOnClickListener(this);
         playBD3.setOnClickListener(this);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Reflex Training");
-        setSupportActionBar(toolbar);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.activity_list_menu, menu);
-        return true;
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (drawerToggle.onOptionsItemSelected(item))
+        {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_home:
-                toHomeActivity();
-                return true;
-            case R.id.menu_reflex:
-                return true;
-            case R.id.menu_strength:
-                toStrengthTrainingActivity();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else {
+            super.onBackPressed();
         }
     }
 
@@ -142,6 +196,12 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         Intent switchActivityIntent = new Intent(this, StrengthTraining.class);
         startActivity(switchActivityIntent);
     }
+
+    public void toBleActivity() {
+        Intent switchActivityIntent = new Intent(this, Bluetooth.class);
+        startActivity(switchActivityIntent);
+    }
+
 
     @Override
     public void onClick(View view) {
@@ -162,10 +222,12 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                 localMusicButtonPressed = 3;
                 break;
             case R.id.btnStartActivity:
-                NUMBER_ITERATIONS = mCurrent;
-                times = NUMBER_ITERATIONS;
-                score = 0;
-                startReflexTraining();
+                if(!running) {
+                    NUMBER_ITERATIONS = mCurrent;
+                    times = NUMBER_ITERATIONS;
+                    score = 0;
+                    startReflexTraining();
+                }
                 break;
             case R.id.btnStopActivity:
                 times = 1;
@@ -291,29 +353,13 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                                                     correctBtnPress = true;
                                                 }
                                                 // playSound(rec_val);
-                                                BleManager.getInstance().write(
-                                                        Utils.getBleDevice(currDevRead),
-                                                        Utils.getBluetoothGattService(),
-                                                        Utils.getCharacteristicWrite(),
-                                                        Utils.hexStringToBytes(Integer.toHexString(30)),
-                                                        new BleWriteCallback() {
-                                                            @Override
-                                                            public void onWriteSuccess(int current, int total, byte[] justWrite) {
-                                                                Log.i("Write30Read", String.valueOf(30));
-                                                            }
-
-                                                            @Override
-                                                            public void onWriteFailure(BleException exception) {
-                                                                Log.i("Write30Read", exception.getDescription());
-                                                            }
-                                                        });
                                             }
                                         }
                                     }
 
                                     @Override
                                     public void onReadFailure(BleException exception) {
-                                        Log.i("Read", exception.getDescription());
+                                        //Log.i("Read", exception.getDescription());
                                     }
                                 });
                     }

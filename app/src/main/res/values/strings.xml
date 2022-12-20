@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Reflexion</string>
+    <string name="open">Open Navigation Drawer</string>
+    <string name="close">Close Navigation Drawer</string>
     <string name="descr_overflow_button">Menu</string>
     <string name="ble_not_supported">BLE is not supported</string>
     <string name="label_data">Data:</string>

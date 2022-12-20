@@ -12,13 +12,18 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.clj.fastble.BleManager;
 import com.clj.fastble.callback.BleReadCallback;
 import com.clj.fastble.callback.BleWriteCallback;
 import com.clj.fastble.exception.BleException;
+import com.google.android.material.navigation.NavigationView;
 
 public class StrengthTraining extends AppCompatActivity implements View.OnClickListener {
 
@@ -31,11 +36,67 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
     private int tests = 0;
     private boolean running = false;
     private Handler handler = new Handler();
+    DrawerLayout drawerLayout;
+    NavigationView navigationView;
+    ActionBarDrawerToggle drawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_strength_training);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean isActivitySwitch = false;
+                        switch (item.getItemId())
+                        {
+                            case R.id.menu_home:
+                                toHomeActivity();
+                                isActivitySwitch = true;
+                                break;
+                            case R.id.bluetooth:
+                                toBleActivity();
+                                isActivitySwitch = true;
+                                break;
+                            case R.id.stats:
+                                Utils.toast(StrengthTraining.this, "Stats Selected");
+                                break;
+                            case R.id.info:
+                                Utils.toast(StrengthTraining.this, "Info Selected");
+                                break;
+                            case R.id.achievements:
+                                Utils.toast(StrengthTraining.this, "Achievements Selected");
+                                break;
+                            case R.id.menu_reflex:
+                                toReflexTrainingActivity();
+                                isActivitySwitch = true;
+                                break;
+                            case R.id.menu_strength:
+                                Utils.toast(StrengthTraining.this, "You are here!");
+                                break;
+                        }
+                        if (isActivitySwitch)
+                            finish();
+                    }
+                });
+                return false;
+            }
+        });
+        navigationView.bringToFront();
 
         progressBar = (ProgressBar) findViewById(R.id.strPb);
         textView = findViewById(R.id.text_view_1);
@@ -48,34 +109,27 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
         stActBtn.setOnClickListener(this);
         stopActBtn.setOnClickListener(this);
 
-
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Strength Training");
-        setSupportActionBar(toolbar);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.activity_list_menu, menu);
-        return true;
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (drawerToggle.onOptionsItemSelected(item))
+        {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_home:
-                toHomeActivity();
-                return true;
-            case R.id.menu_reflex:
-                toReflexTrainingActivity();
-                return true;
-            case R.id.menu_strength:
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else {
+            super.onBackPressed();
         }
     }
+
     public void toHomeActivity() {
         Intent switchActivityIntent = new Intent(this, MainActivity.class);
         startActivity(switchActivityIntent);
@@ -83,6 +137,11 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
 
     public void toReflexTrainingActivity() {
         Intent switchActivityIntent = new Intent(this, ReflexTraining.class);
+        startActivity(switchActivityIntent);
+    }
+
+    public void toBleActivity() {
+        Intent switchActivityIntent = new Intent(this, Bluetooth.class);
         startActivity(switchActivityIntent);
     }
 
@@ -109,10 +168,40 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                                 }
                             });
                 }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (Utils.getCONNECTION_STATUS(1) == 1) {
+                    BleManager.getInstance().write(
+                            Utils.getBleDevice(1),
+                            Utils.getBluetoothGattService(),
+                            Utils.getCharacteristicWrite(),
+                            Utils.intToByteArray(18),
+                            new BleWriteCallback() {
+                                @Override
+                                public void onWriteSuccess(int current, int total, byte[] justWrite) {
+
+                                    Log.i("Write", "data written");
+                                }
+
+                                @Override
+                                public void onWriteFailure(BleException exception) {
+                                    Log.i("Write", exception.getDescription());
+                                }
+                            });
+                }
                 running = true;
                 updateProgressBars();
                 break;
             case R.id.endBtn:
+                running = false;
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 if (Utils.getCONNECTION_STATUS(0) == 1) {
                     BleManager.getInstance().write(
                             Utils.getBleDevice(0),
@@ -131,7 +220,30 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                                 }
                             });
                 }
-                running = false;
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (Utils.getCONNECTION_STATUS(1) == 1) {
+                    BleManager.getInstance().write(
+                            Utils.getBleDevice(1),
+                            Utils.getBluetoothGattService(),
+                            Utils.getCharacteristicWrite(),
+                            Utils.intToByteArray(19),
+                            new BleWriteCallback() {
+                                @Override
+                                public void onWriteSuccess(int current, int total, byte[] justWrite) {
+
+                                    Log.i("Write", "data written");
+                                }
+
+                                @Override
+                                public void onWriteFailure(BleException exception) {
+                                    Log.i("Write", exception.getDescription());
+                                }
+                            });
+                }
                 break;
             default:
                 break;
@@ -153,10 +265,8 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                                     public void onReadSuccess(byte[] data) {
                                         String s = new String(data);
                                         Log.i("Read", s);
-                                        if((int) Float.parseFloat(s)%10 == 1)
-                                            progressStatus = (int) Float.parseFloat(s)/10;
-                                        if((int) Float.parseFloat(s)%10 == 2)
-                                            progressStatus2 = (int) Float.parseFloat(s)/10;
+                                        if (!s.equals(""))
+                                            progressStatus = (int) Float.parseFloat(s);
                                     }
 
                                     @Override
@@ -165,9 +275,25 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                                     }
                                 });
                     }
-                    else
-                    {
-                        Log.i("Strength Training", "No Devices Available");
+                    if (Utils.getCONNECTION_STATUS(1) == 1) {
+                        BleManager.getInstance().read(
+                                Utils.getBleDevice(1),
+                                Utils.getBluetoothGattService(),
+                                Utils.getCharacteristicRead(),
+                                new BleReadCallback() {
+                                    @Override
+                                    public void onReadSuccess(byte[] data) {
+                                        String s = new String(data);
+                                        Log.i("Read", s);
+                                        if (!s.equals(""))
+                                            progressStatus2 = (int) Float.parseFloat(s);
+                                    }
+
+                                    @Override
+                                    public void onReadFailure(BleException exception) {
+                                        Log.i("Read", exception.getDescription());
+                                    }
+                                });
                     }
                     handler.post(new Runnable() {
                         public void run() {

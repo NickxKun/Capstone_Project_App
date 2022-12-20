@@ -1,29 +1,54 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.Reflex_traing_device_3_0" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/grey_50</item>
-        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="colorPrimary">#303030</item>
+        <item name="colorPrimaryVariant">#202020</item>
         <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="colorSecondaryVariant">@color/white</item>
+        <item name="colorOnSecondary">#202020</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+    </style>
+
+    <style name="neumorphTxtView" parent="Widget.Neumorph.TextView">
+        <item name="neumorph_shadowColorDark">#191B1E</item>
+        <item name="neumorph_shadowColorLight">#30343a</item>
+    </style>
+    <style name="neumorphFloatingBtn" parent="Widget.Neumorph.FloatingActionButton">
+        <item name="neumorph_shadowColorDark">#191B1E</item>
+        <item name="neumorph_shadowColorLight">#30343a</item>
+    </style>
+    <style name="neumorphCardView" parent="Widget.Neumorph.CardView">
+        <item name="neumorph_shadowColorDark">#191B1E</item>
+        <item name="neumorph_shadowColorLight">#30343a</item>
+    </style>
+    <style name="neumorphImgBtn" parent="Widget.Neumorph.ImageButton">
+        <item name="neumorph_shadowColorDark">#191B1E</item>
+        <item name="neumorph_shadowColorLight">#30343a</item>
+        <item name="android:tint">#d1d9e6</item>
+    </style>
+    <style name="neumorphBtn" parent="Widget.Neumorph.Button">
+        <item name="neumorph_shadowColorDark">#191B1E</item>
+        <item name="neumorph_shadowColorLight">#30343a</item>
+    </style>
+    <style name="ImageButtonColor">
+        <item name="android:tint">#d1d9e6</item>
     </style>
     <style name="buttonColor">
         <item name="android:backgroundTint">#434343</item>
     </style>
     <style name="toolbarColor">
-        <item name="android:background">@color/grey_50</item>
+        <item name="android:background">#292D32</item>
     </style>
     <style name="dropDown">
         <item name="android:background">@color/grey_50</item>
     </style>
     <style name="textColors">
         <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="textColorsAlt">
+        <item name="android:textColor">#555555</item>
     </style>
     <style name="btLogo">
         <item name="android:src">@android:drawable/stat_sys_data_bluetooth</item>

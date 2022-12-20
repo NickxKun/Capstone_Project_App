@@ -1,13 +1,10 @@
 package com.example.reflex_traing_device_3_0;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,9 +12,11 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -32,10 +31,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.clj.fastble.BleManager;
 import com.clj.fastble.callback.BleGattCallback;
@@ -47,7 +49,7 @@ import com.clj.fastble.exception.BleException;
 import com.clj.fastble.scan.BleScanRuleConfig;
 import com.example.reflex_traing_device_3_0.adapter.DeviceAdapter;
 import com.example.reflex_traing_device_3_0.comm.ObserverManager;
-import com.example.reflex_traing_device_3_0.operation.OperationActivity;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,10 +72,66 @@ public class Bluetooth extends AppCompatActivity implements View.OnClickListener
     private DeviceAdapter mDeviceAdapter;
     private ProgressDialog progressDialog;
 
+    DrawerLayout drawerLayout;
+    NavigationView navigationView;
+    ActionBarDrawerToggle drawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        switch (item.getItemId())
+                        {
+                            case R.id.menu_home:
+                                toHomeActivity();
+                                break;
+                            case R.id.bluetooth:
+                                Utils.toast(Bluetooth.this, "You are here!");
+                                break;
+                            case R.id.stats:
+                                Utils.toast(Bluetooth.this, "Stats Selected");
+                                break;
+                            case R.id.info:
+                                Utils.toast(Bluetooth.this, "Info Selected");
+                                break;
+                            case R.id.profileManager:
+                                toProfileManager();
+                                break;
+                            case R.id.achievements:
+                                Utils.toast(Bluetooth.this, "Achievements Selected");
+                                break;
+                            case R.id.menu_reflex:
+                                toReflexTrainingActivity();
+                                break;
+                            case R.id.menu_strength:
+                                toStrengthTrainingActivity();
+                                break;
+                        }
+                    }
+                });
+                return false;
+            }
+        });
+        navigationView.bringToFront();
+
         initView();
         BleManager.getInstance().init(getApplication());
         BleManager.getInstance()
@@ -81,6 +139,45 @@ public class Bluetooth extends AppCompatActivity implements View.OnClickListener
                 .setReConnectCount(1, 5000)
                 .setConnectOverTime(20000)
                 .setOperateTimeout(5000);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (drawerToggle.onOptionsItemSelected(item))
+        {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+        else {
+            super.onBackPressed();
+        }
+    }
+
+    public void toHomeActivity() {
+        Intent switchActivityIntent = new Intent(this, MainActivity.class);
+        startActivity(switchActivityIntent);
+    }
+
+    public void toReflexTrainingActivity() {
+        Intent switchActivityIntent = new Intent(this, ReflexTraining.class);
+        startActivity(switchActivityIntent);
+    }
+
+    public void toStrengthTrainingActivity() {
+        Intent switchActivityIntent = new Intent(this, StrengthTraining.class);
+        startActivity(switchActivityIntent);
+    }
+
+    public void toProfileManager() {
+        Intent switchActivityIntent = new Intent(this, ProfileManager.class);
+        startActivity(switchActivityIntent);
     }
 
 

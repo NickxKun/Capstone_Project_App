@@ -12,4 +12,7 @@
     <color name="grey_100">#646464</color>
     <color name="grey_50">#323232</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="graph_start_color">#CCA4BF69</color>
+    <color name="graph_end_color">#00FFFFFF</color>
+    <color name="axis_color">#00ECF0F3</color>
 </resources>

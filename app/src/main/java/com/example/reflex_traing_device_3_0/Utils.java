@@ -1,6 +1,8 @@
 package com.example.reflex_traing_device_3_0;
 
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -154,6 +156,17 @@ public class Utils {
 
     public static byte charToByte(char c) {
         return (byte) "0123456789ABCDEF".indexOf(c);
+    }
+
+    public static String getActivePatientName(Context context) {
+        DatabaseHelper DB;
+        DB = new DatabaseHelper(context);
+        Cursor res = DB.getActiveProfile();
+        if(res.getCount()!=0){
+            res.moveToNext();
+            return res.getString(0);
+        }
+        return "No Active User";
     }
 
 }

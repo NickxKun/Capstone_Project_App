@@ -1,7 +1,6 @@
 package com.example.reflex_traing_device_3_0;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -28,12 +27,15 @@ public class Utils {
     }
 
     public static int lookUpBLEDevice(BleDevice bleDevice) {
-        if (bleDevice2 == bleDevice)
+        if (bleDevice2 == bleDevice) {
             return 1;
-        if (bleDevice3 == bleDevice)
+        }
+        if (bleDevice3 == bleDevice){
             return 2;
-        if (bleDevice4 == bleDevice)
+        }
+        if (bleDevice4 == bleDevice){
             return 3;
+        }
         return 0;
     }
 
@@ -49,10 +51,10 @@ public class Utils {
                 CONNECTION_STATUS[1] = status;
                 break;
             case 2:
-                CONNECTION_STATUS[3] = status;
+                CONNECTION_STATUS[2] = status;
                 break;
             case 3:
-                CONNECTION_STATUS[4] = status;
+                CONNECTION_STATUS[3] = status;
                 break;
         }
     }
@@ -70,6 +72,22 @@ public class Utils {
         }
     }
     public static void setBleDevice(BleDevice device) {
+
+        if (device.getName().equals("ESP32_1")) {
+            bleDevice1 = device;
+            CONNECTION_STATUS[0] = 1;
+        } else if (device.getName().equals("ESP32_2")) {
+            bleDevice2 = device;
+            CONNECTION_STATUS[1] = 1;
+        } else if (device.getName().equals("ESP32_3")) {
+            bleDevice3 = device;
+            CONNECTION_STATUS[2] = 1;
+        } else if (device.getName().equals("ESP32_4")) {
+            bleDevice4 = device;
+            CONNECTION_STATUS[3] = 1;
+        }
+
+        /*
         if (CONNECTION_STATUS[0] == 0) {
             bleDevice1 = device;
             CONNECTION_STATUS[0] = 1;
@@ -82,7 +100,7 @@ public class Utils {
         } else if (CONNECTION_STATUS[3] == 0) {
             bleDevice4 = device;
             CONNECTION_STATUS[3] = 1;
-        }
+        }*/
     }
 
     public static String getBluetoothGattService() {
@@ -159,8 +177,8 @@ public class Utils {
     }
 
     public static String getActivePatientName(Context context) {
-        DatabaseHelper DB;
-        DB = new DatabaseHelper(context);
+        PatientsDatabaseHelper DB;
+        DB = new PatientsDatabaseHelper(context);
         Cursor res = DB.getActiveProfile();
         if(res.getCount()!=0){
             res.moveToNext();

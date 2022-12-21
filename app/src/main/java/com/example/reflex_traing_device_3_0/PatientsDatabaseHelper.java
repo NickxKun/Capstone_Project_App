@@ -5,12 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
-import androidx.annotation.Nullable;
-
-public class DatabaseHelper extends SQLiteOpenHelper {
-    public DatabaseHelper(Context context) {
+public class PatientsDatabaseHelper extends SQLiteOpenHelper {
+    public PatientsDatabaseHelper(Context context) {
         super(context, "Userdata.db", null, 1);
     }
     @Override
@@ -116,4 +113,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return false;
         }
     }
+
+    public boolean checkName (String name)
+    {
+        SQLiteDatabase DB = this.getWritableDatabase();
+        Cursor cursor = DB.rawQuery("Select * from Userdetails where name = ?", new String[]{name});
+        if (cursor.getCount() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

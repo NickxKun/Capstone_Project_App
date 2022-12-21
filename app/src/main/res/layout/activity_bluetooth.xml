@@ -91,23 +91,82 @@
             android:orientation="horizontal"
             android:padding="10dp">
 
-            <Button
-                android:id="@+id/btn_scan"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                style="@style/buttonColor"
-                android:text="@string/start_scan" />
+                android:layout_below="@+id/btnStatusView">
+                <soup.neumorphism.NeumorphButton
+                    android:id="@+id/btn_scan"
+                    android:layout_marginTop="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    style="@style/neumorphBtn"
+                    android:text="@string/start_scan" />
 
-            <ImageView
-                android:id="@+id/img_loading"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:src="@mipmap/ic_loading"
-                android:visibility="invisible" />
+                <ImageView
+                    android:id="@+id/img_loading"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:src="@mipmap/ic_loading"
+                    android:visibility="invisible" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/btnStatusView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+                <soup.neumorphism.NeumorphFloatingActionButton
+                    android:contentDescription="statusBtn1"
+                    android:id="@+id/dev_1_status"
+                    android:padding="20dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_baseline_center_focus_strong_24"
+                    style="@style/neumorphFloatingBtn"/>
+                <soup.neumorphism.NeumorphFloatingActionButton
+                    android:contentDescription="statusBtn2"
+                    android:id="@+id/dev_2_status"
+                    android:padding="20dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_baseline_center_focus_strong_24"
+                    android:layout_toEndOf="@+id/dev_1_status"
+                    style="@style/neumorphFloatingBtn"/>
+                <soup.neumorphism.NeumorphFloatingActionButton
+                    android:contentDescription="statusBtn3"
+                    android:id="@+id/dev_3_status"
+                    android:padding="20dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_baseline_center_focus_strong_24"
+                    android:layout_toEndOf="@+id/dev_2_status"
+                    style="@style/neumorphFloatingBtn"/>
+                <soup.neumorphism.NeumorphFloatingActionButton
+                    android:contentDescription="statusBtn4"
+                    android:id="@+id/dev_4_status"
+                    android:padding="20dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_baseline_center_focus_strong_24"
+                    android:layout_toEndOf="@+id/dev_3_status"
+                    style="@style/neumorphFloatingBtn"/>
+
+            </RelativeLayout>
 
         </RelativeLayout>
 

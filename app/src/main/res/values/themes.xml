@@ -53,5 +53,9 @@
     </style>
     <style name="btLogo">
         <item name="android:src">@mipmap/ic_blue_remote</item>
+        <item name="tint">@color/black</item>
+    </style>
+    <style name="listItemColor">
+        <item name="android:background">#FFFFFF</item>
     </style>
 </resources>

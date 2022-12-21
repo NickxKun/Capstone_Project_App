@@ -39,6 +39,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     ActionBarDrawerToggle drawerToggle;
+    Thread t;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,7 +170,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                             });
                 }
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -197,6 +198,12 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.endBtn:
                 running = false;
+                try {
+                    t.stop();
+                } catch (Exception e) {
+                    Log.i("StrengthActivity", "Done.");
+                }
+
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -252,7 +259,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
     }
 
     private void updateProgressBars() {
-        new Thread(new Runnable() {
+        t = new Thread(new Runnable() {
             public void run() {
                 while (running) {
                     if (Utils.getCONNECTION_STATUS(0) == 1) {
@@ -265,8 +272,14 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                                     public void onReadSuccess(byte[] data) {
                                         String s = new String(data);
                                         Log.i("Read", s);
-                                        if (!s.equals(""))
-                                            progressStatus = (int) Float.parseFloat(s);
+                                        if (!s.equals("")){
+                                            try {
+                                                progressStatus = (int) Float.parseFloat(s);
+                                            } catch (Exception e) {
+                                                Log.i("onReadSuccess", e.toString());
+                                                progressStatus = 0;
+                                            }
+                                        }
                                     }
 
                                     @Override
@@ -285,8 +298,14 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                                     public void onReadSuccess(byte[] data) {
                                         String s = new String(data);
                                         Log.i("Read", s);
-                                        if (!s.equals(""))
-                                            progressStatus2 = (int) Float.parseFloat(s);
+                                        if (!s.equals("")) {
+                                            try {
+                                                progressStatus2 = (int) Float.parseFloat(s);
+                                            } catch (Exception e) {
+                                                Log.i("onReadSuccess", e.toString());
+                                                progressStatus2 = 0;
+                                            }
+                                        }
                                     }
 
                                     @Override
@@ -311,6 +330,8 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                     }
                 }
             }
-        }).start();
+        });
+
+        t.start();
     }
 }

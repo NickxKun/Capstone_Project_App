@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.PorterDuff;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
@@ -26,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +59,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import soup.neumorphism.NeumorphFloatingActionButton;
+
 public class Bluetooth extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -75,6 +81,13 @@ public class Bluetooth extends AppCompatActivity implements View.OnClickListener
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     ActionBarDrawerToggle drawerToggle;
+
+    private NeumorphFloatingActionButton btnDevice1;
+    private NeumorphFloatingActionButton btnDevice2;
+    private NeumorphFloatingActionButton btnDevice3;
+    private NeumorphFloatingActionButton btnDevice4;
+
+    private RelativeLayout btnStatusLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +152,20 @@ public class Bluetooth extends AppCompatActivity implements View.OnClickListener
                 .setReConnectCount(1, 5000)
                 .setConnectOverTime(20000)
                 .setOperateTimeout(5000);
+
+        btnDevice1 = findViewById(R.id.dev_1_status);
+        btnDevice2 = findViewById(R.id.dev_2_status);
+        btnDevice3 = findViewById(R.id.dev_3_status);
+        btnDevice4 = findViewById(R.id.dev_4_status);
+
+        btnStatusLayout = findViewById(R.id.btnStatusView);
+
+        updateStatusButtons();
+
+        btnDevice1.setOnClickListener(this);
+        btnDevice2.setOnClickListener(this);
+        btnDevice3.setOnClickListener(this);
+        btnDevice4.setOnClickListener(this);
     }
 
     @Override
@@ -180,6 +207,36 @@ public class Bluetooth extends AppCompatActivity implements View.OnClickListener
         startActivity(switchActivityIntent);
     }
 
+    public void updateStatusButtons() {
+
+        Resources res = this.getResources();
+        final int button_off = res.getColor(R.color.red_200);
+        final int button_on = res.getColor(R.color.teal_200);
+
+        Log.i("updateStatusButtons", String.valueOf(Utils.getCONNECTION_STATUS(2)));
+
+        if (Utils.getCONNECTION_STATUS(0)==1)
+            btnDevice1.setColorFilter(button_on, PorterDuff.Mode.SRC_ATOP);
+        else
+            btnDevice1.setColorFilter(button_off, PorterDuff.Mode.SRC_ATOP);
+
+        if (Utils.getCONNECTION_STATUS(1)==1)
+            btnDevice2.setColorFilter(button_on, PorterDuff.Mode.SRC_ATOP);
+        else
+            btnDevice2.setColorFilter(button_off, PorterDuff.Mode.SRC_ATOP);
+
+        if (Utils.getCONNECTION_STATUS(2)==1)
+            btnDevice3.setColorFilter(button_on, PorterDuff.Mode.SRC_ATOP);
+        else
+            btnDevice3.setColorFilter(button_off, PorterDuff.Mode.SRC_ATOP);
+        if (Utils.getCONNECTION_STATUS(3)==1)
+            btnDevice4.setColorFilter(button_on, PorterDuff.Mode.SRC_ATOP);
+        else
+            btnDevice4.setColorFilter(button_off, PorterDuff.Mode.SRC_ATOP);
+
+        btnStatusLayout.refreshDrawableState();
+
+    }
 
     @Override
     public void onClick(View v) {
@@ -199,6 +256,26 @@ public class Bluetooth extends AppCompatActivity implements View.OnClickListener
                 } else {
                     layout_setting.setVisibility(View.VISIBLE);
                     txt_setting.setText(getString(R.string.retrieve_search_settings));
+                }
+                break;
+            case R.id.dev_1_status:
+                if (BleManager.getInstance().isConnected(Utils.getBleDevice(0))) {
+                    BleManager.getInstance().disconnect(Utils.getBleDevice(0));
+                }
+                break;
+            case R.id.dev_2_status:
+                if (BleManager.getInstance().isConnected(Utils.getBleDevice(1))) {
+                    BleManager.getInstance().disconnect(Utils.getBleDevice(1));
+                }
+                break;
+            case R.id.dev_3_status:
+                if (BleManager.getInstance().isConnected(Utils.getBleDevice(2))) {
+                    BleManager.getInstance().disconnect(Utils.getBleDevice(2));
+                }
+                break;
+            case R.id.dev_4_status:
+                if (BleManager.getInstance().isConnected(Utils.getBleDevice(3))) {
+                    BleManager.getInstance().disconnect(Utils.getBleDevice(3));
                 }
                 break;
         }
@@ -245,14 +322,6 @@ public class Bluetooth extends AppCompatActivity implements View.OnClickListener
                 }
             }
 
-            @Override
-            public void onDetail(BleDevice bleDevice) {
-                if (BleManager.getInstance().isConnected(bleDevice)) {
-                    Intent intent = new Intent(Bluetooth.this, MainActivity.class);
-                    //intent.putExtra(OperationActivity.KEY_DATA, bleDevice);
-                    startActivity(intent);
-                }
-            }
         });
         ListView listView_device = (ListView) findViewById(R.id.list_device);
         listView_device.setAdapter(mDeviceAdapter);
@@ -365,6 +434,7 @@ public class Bluetooth extends AppCompatActivity implements View.OnClickListener
                 Utils.setDevCount(Utils.getDevCount()+1);
                 mDeviceAdapter.addDevice(bleDevice);
                 mDeviceAdapter.notifyDataSetChanged();
+                updateStatusButtons();
             }
 
             @Override
@@ -382,6 +452,8 @@ public class Bluetooth extends AppCompatActivity implements View.OnClickListener
                     Toast.makeText(Bluetooth.this, getString(R.string.disconnected), Toast.LENGTH_LONG).show();
                     ObserverManager.getInstance().notifyObserver(bleDevice);
                 }
+
+                updateStatusButtons();
 
             }
         });

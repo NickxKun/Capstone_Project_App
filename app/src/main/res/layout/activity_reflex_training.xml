@@ -30,24 +30,25 @@
 
         <!-- Bass Drums -->
 
-        <Button
+        <soup.neumorphism.NeumorphButton
             android:id="@+id/btnStartActivity"
-            android:layout_width="wrap_content"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/btnBD2"
             android:layout_marginTop="50dp"
             android:text="Start activity"
-             />
+            style="@style/neumorphBtn" />
 
-        <Button
+        <soup.neumorphism.NeumorphButton
             android:id="@+id/btnStopActivity"
-            android:layout_width="wrap_content"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/btnStartActivity"
             android:layout_marginTop="10dp"
-            android:text="Stop activity" />
+            android:text="Stop activity"
+            style="@style/neumorphBtn" />
 
         <ProgressBar
             android:max="100"

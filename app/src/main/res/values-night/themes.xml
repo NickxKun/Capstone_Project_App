@@ -52,6 +52,10 @@
     </style>
     <style name="btLogo">
         <item name="android:src">@android:drawable/stat_sys_data_bluetooth</item>
+        <item name="tint">@color/white</item>
+    </style>
+    <style name="listItemColor">
+        <item name="android:background">#141619</item>
     </style>
 
 </resources>

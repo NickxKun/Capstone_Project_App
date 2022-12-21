@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -36,11 +37,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ScrollView details;
     RelativeLayout addProfileToProceed;
     CurveGraphView curveGraphView;
-    DatabaseHelper DB;
+    PatientsDatabaseHelper DB;
     ImageButton addProfile;
     TextView welcomeText;
     TextView headerTitle;
     NeumorphCardView reflexCardView, strengthCardView;
+
+    ValuesDatabaseHelper statsDB;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -54,7 +57,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         details =  findViewById(R.id.details);
         addProfileToProceed = findViewById(R.id.addProfileToProceed);
-        DB = new DatabaseHelper(this);
+        DB = new PatientsDatabaseHelper(this);
+        statsDB = new ValuesDatabaseHelper(this);
         if (DB.getdata().getCount()==0) {
             details.setVisibility(View.INVISIBLE);
             addProfileToProceed.setVisibility(View.VISIBLE);
@@ -82,17 +86,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .setHorizontalGuideline(2)
                         .setGuidelineColor(R.color.grey_200)                                    // Set color of the visible guidelines.
                         .setNoDataMsg(" No Data ")                                              // Message when no data is provided to the view.
-                        .setxAxisScaleTextColor(R.color.black)                                  // Set X axis scale text color.
-                        .setyAxisScaleTextColor(R.color.black)                                  // Set Y axis scale text color
+                        .setxAxisScaleTextColor(R.color.white)                                  // Set X axis scale text color.
+                        .setyAxisScaleTextColor(R.color.white)                                  // Set Y axis scale text color
                         .setAnimationDuration(2000)                                             // Set Animation Duration
                         .build()
         );
 
         PointMap pointMap = new PointMap();
-        pointMap.addPoint(0, 100);
-        pointMap.addPoint(1, 500);
-        pointMap.addPoint(4, 600);
-        pointMap.addPoint(5, 800);
+        Cursor statsCursor = statsDB.getData(1);
+        for (int i=0; statsCursor.moveToNext(); i++){
+            Log.i("statsCursor", String.valueOf(statsCursor.getInt(1)));
+            pointMap.addPoint(i, statsCursor.getInt(1));
+        }
 
         GraphData gd = GraphData.builder(this)
                 .setPointMap(pointMap)
@@ -100,23 +105,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setGraphGradient(R.color.graph_start_color, R.color.graph_end_color)
                 .build();
 
-        PointMap p2 = new PointMap();
-        p2.addPoint(0, 140);
-        p2.addPoint(1, 700);
-        p2.addPoint(2, 100);
-        p2.addPoint(3, 0);
-        p2.addPoint(4, 190);
-
-        GraphData gd2 = GraphData.builder(this)
-                .setPointMap(p2)
-                .setGraphStroke(R.color.graph_start_color)
-                .setGraphGradient(R.color.graph_start_color, R.color.graph_end_color)
-                .build();
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                curveGraphView.setData(5, 900, gd, gd2);
+                curveGraphView.setData(statsCursor.getCount(), 900, gd);
             }
         }, 250);
 
@@ -246,13 +238,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                    Toast.makeText(MainActivity.this, "Entry Updated", Toast.LENGTH_SHORT).show();
 //                else
 //                    Toast.makeText(MainActivity.this, "New Entry Not Updated", Toast.LENGTH_SHORT).show();
-//                break;
-//            case R.id.btnDelete:
-//                Boolean checkudeletedata = DB.deletedata(nameTXT);
-//                if(checkudeletedata==true)
-//                    Toast.makeText(MainActivity.this, "Entry Deleted", Toast.LENGTH_SHORT).show();
-//                else
-//                    Toast.makeText(MainActivity.this, "Entry Not Deleted", Toast.LENGTH_SHORT).show();
 //                break;
 //            case R.id.btnView:
 //                Cursor res = DB.getdata();

@@ -96,7 +96,6 @@ public class DeviceAdapter  extends BaseAdapter {
             holder.layout_connected = (LinearLayout) convertView.findViewById(R.id.layout_connected);
             holder.btn_disconnect = (Button) convertView.findViewById(R.id.btn_disconnect);
             holder.btn_connect = (Button) convertView.findViewById(R.id.btn_connect);
-            holder.btn_detail = (Button) convertView.findViewById(R.id.btn_detail);
         }
 
         final BleDevice bleDevice = getItem(position);
@@ -116,8 +115,6 @@ public class DeviceAdapter  extends BaseAdapter {
                 holder.layout_connected.setVisibility(View.VISIBLE);
             } else {
                 holder.img_blue.setImageResource(R.mipmap.ic_blue_remote);
-                holder.txt_name.setTextColor(0xFF000000);
-                holder.txt_mac.setTextColor(0xFF000000);
                 holder.layout_idle.setVisibility(View.VISIBLE);
                 holder.layout_connected.setVisibility(View.GONE);
             }
@@ -141,15 +138,6 @@ public class DeviceAdapter  extends BaseAdapter {
             }
         });
 
-        holder.btn_detail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mListener != null) {
-                    mListener.onDetail(bleDevice);
-                }
-            }
-        });
-
         return convertView;
     }
 
@@ -162,15 +150,12 @@ public class DeviceAdapter  extends BaseAdapter {
         LinearLayout layout_connected;
         Button btn_disconnect;
         Button btn_connect;
-        Button btn_detail;
     }
 
     public interface OnDeviceClickListener {
         void onConnect(BleDevice bleDevice);
 
         void onDisConnect(BleDevice bleDevice);
-
-        void onDetail(BleDevice bleDevice);
     }
 
     private OnDeviceClickListener mListener;

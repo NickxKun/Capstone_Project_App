@@ -3,6 +3,7 @@ package com.example.reflex_traing_device_3_0;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import com.clj.fastble.BleManager;
 import com.clj.fastble.callback.BleReadCallback;
 import com.clj.fastble.callback.BleWriteCallback;
 import com.clj.fastble.exception.BleException;
+import com.example.reflex_traing_device_3_0.profile_operations.AddProfile;
 import com.google.android.material.navigation.NavigationView;
 
 
@@ -43,6 +45,9 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     ActionBarDrawerToggle drawerToggle;
+
+    ValuesDatabaseHelper DB;
+
     int times;
     int currBtn;
     int score;
@@ -120,6 +125,8 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         navigationView.bringToFront();
 
         context = getApplicationContext();
+
+        DB = new ValuesDatabaseHelper(this);
 
         Button stActBtn = this.findViewById(R.id.btnStartActivity);
         Button stopActBtn = this.findViewById(R.id.btnStopActivity);
@@ -210,15 +217,15 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
 
         switch (view.getId()) {
             case R.id.btnBD1:
-                mp = MediaPlayer.create(this, R.raw.bdl1a);
+                mp = MediaPlayer.create(this, R.raw.kick2);
                 localMusicButtonPressed = 1;
                 break;
             case R.id.btnBD2:
-                mp = MediaPlayer.create(this, R.raw.bdl2a);
+                mp = MediaPlayer.create(this, R.raw.snare2);
                 localMusicButtonPressed = 2;
                 break;
             case R.id.btnBD3:
-                mp = MediaPlayer.create(this, R.raw.bdl3a);
+                mp = MediaPlayer.create(this, R.raw.tom2);
                 localMusicButtonPressed = 3;
                 break;
             case R.id.btnStartActivity:
@@ -352,7 +359,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                                                     score++;
                                                     correctBtnPress = true;
                                                 }
-                                                // playSound(rec_val);
+                                                playSound(rec_val);
                                             }
                                         }
                                     }
@@ -387,14 +394,15 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
 
                 if (times != 1) {
                     times--;
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                     startReflexTraining();
                 } else {
                     running = false;
+
+                    Boolean checkinsertdata = DB.insertData(1, (int) avgTime, score, (float) (score/NUMBER_ITERATIONS), 0, 0);
+                    if(checkinsertdata)
+                        Toast.makeText(ReflexTraining.this, "New Entry Inserted", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(ReflexTraining.this, "New Entry Not Inserted", Toast.LENGTH_SHORT).show();
                     scoreboard.setText("Score: " + score);
                     avgRepTim.setText("Average Response Time: " + (int) avgTime);
                 }
@@ -409,15 +417,15 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
 
         switch (rec_val) {
             case 1:
-                mp = MediaPlayer.create(this, R.raw.bdl1a);
+                mp = MediaPlayer.create(this, R.raw.kick1);
                 localMusicButtonPressed = 1;
                 break;
             case 2:
-                mp = MediaPlayer.create(this, R.raw.bdl2a);
+                mp = MediaPlayer.create(this, R.raw.snare1);
                 localMusicButtonPressed = 2;
                 break;
             case 3:
-                mp = MediaPlayer.create(this, R.raw.bdl3a);
+                mp = MediaPlayer.create(this, R.raw.tom1);
                 localMusicButtonPressed = 3;
                 break;
             default:

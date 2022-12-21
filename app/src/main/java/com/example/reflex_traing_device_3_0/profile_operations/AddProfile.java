@@ -18,7 +18,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.reflex_traing_device_3_0.Bluetooth;
-import com.example.reflex_traing_device_3_0.DatabaseHelper;
+import com.example.reflex_traing_device_3_0.PatientsDatabaseHelper;
 import com.example.reflex_traing_device_3_0.MainActivity;
 import com.example.reflex_traing_device_3_0.ProfileManager;
 import com.example.reflex_traing_device_3_0.R;
@@ -35,7 +35,7 @@ public class AddProfile extends AppCompatActivity {
 
     EditText name, contact, dob, gender;
     Button insert;
-    DatabaseHelper DB;
+    PatientsDatabaseHelper DB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +105,7 @@ public class AddProfile extends AppCompatActivity {
         dob = findViewById(R.id.dob);
         gender = findViewById(R.id.gender);
         insert = findViewById(R.id.add_profile_btn);
-        DB = new DatabaseHelper(this);
+        DB = new PatientsDatabaseHelper(this);
         insert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

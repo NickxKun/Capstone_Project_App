@@ -154,7 +154,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                             Utils.getBleDevice(0),
                             Utils.getBluetoothGattService(),
                             Utils.getCharacteristicWrite(),
-                            Utils.intToByteArray(18),
+                            Utils.hexStringToBytes(Integer.toHexString(18)),
                             new BleWriteCallback() {
                                 @Override
                                 public void onWriteSuccess(int current, int total, byte[] justWrite) {
@@ -178,7 +178,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                             Utils.getBleDevice(1),
                             Utils.getBluetoothGattService(),
                             Utils.getCharacteristicWrite(),
-                            Utils.intToByteArray(18),
+                            Utils.hexStringToBytes(Integer.toHexString(18)),
                             new BleWriteCallback() {
                                 @Override
                                 public void onWriteSuccess(int current, int total, byte[] justWrite) {
@@ -207,7 +207,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                             Utils.getBleDevice(0),
                             Utils.getBluetoothGattService(),
                             Utils.getCharacteristicWrite(),
-                            Utils.intToByteArray(19),
+                            Utils.hexStringToBytes(Integer.toHexString(19)),
                             new BleWriteCallback() {
                                 @Override
                                 public void onWriteSuccess(int current, int total, byte[] justWrite) {
@@ -230,7 +230,7 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                             Utils.getBleDevice(1),
                             Utils.getBluetoothGattService(),
                             Utils.getCharacteristicWrite(),
-                            Utils.intToByteArray(19),
+                            Utils.hexStringToBytes(Integer.toHexString(19)),
                             new BleWriteCallback() {
                                 @Override
                                 public void onWriteSuccess(int current, int total, byte[] justWrite) {

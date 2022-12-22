@@ -145,12 +145,12 @@ int getReflex(){
       prevTime = currTime;
       valsPrev = vals;
     }    
-    if(vals==20 && reading_init < 15)
+    if(vals==20 && reading_init < 25)
       setColor(0,0,0);
-    else if(vals == 0 && reading_init < 15)
+    else if(vals == 0 && reading_init < 25)
       setColor(255,255,255);
 
-    if( reading_init > 15 && vals ==20 ){
+    if( reading_init > 25 && vals ==20 ){
       setColor(255,0,255);              
       if(reading_init > reading_final )
         reading_final = reading_init;
@@ -159,7 +159,7 @@ int getReflex(){
         return 1; 
       }
     }
-    else if(reading_init > 15 && vals == 0){
+    else if(reading_init > 25 && vals == 0){
       setColor(0,255,255);
       if(reading_init > reading_final )
         reading_final = reading_init;
@@ -169,6 +169,7 @@ int getReflex(){
       }
     }
   }
+  vals=0;
   return 0;  
 }
 

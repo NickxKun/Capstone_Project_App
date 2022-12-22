@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -34,8 +35,10 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
     private int progressStatus2 = 0;
     private TextView textView2;
     private int tests = 0;
+    private int maxForce = 0;
     private boolean running = false;
     private Handler handler = new Handler();
+    ValuesDatabaseHelper DB;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     ActionBarDrawerToggle drawerToggle;
@@ -103,6 +106,8 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
         textView = findViewById(R.id.text_view_1);
         progressBar2 = (ProgressBar) findViewById(R.id.strPb2);
         textView2 = findViewById(R.id.text_view_2);
+
+        DB = new ValuesDatabaseHelper(this);
 
         Button stActBtn = this.findViewById(R.id.startBtn);
         Button stopActBtn = this.findViewById(R.id.endBtn);
@@ -251,6 +256,13 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                                 }
                             });
                 }
+
+                Boolean checkinsertdata = DB.insertData(2, 0, 0, 0.0F, 0, maxForce);
+                if(checkinsertdata)
+                    Toast.makeText(StrengthTraining.this, "New Entry Inserted", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(StrengthTraining.this, "New Entry Not Inserted", Toast.LENGTH_SHORT).show();
+                maxForce = 0;
                 break;
             default:
                 break;
@@ -275,6 +287,8 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                                         if (!s.equals("")){
                                             try {
                                                 progressStatus = (int) Float.parseFloat(s);
+                                                if (progressStatus>maxForce)
+                                                    maxForce = progressStatus;
                                             } catch (Exception e) {
                                                 Log.i("onReadSuccess", e.toString());
                                                 progressStatus = 0;
@@ -301,6 +315,8 @@ public class StrengthTraining extends AppCompatActivity implements View.OnClickL
                                         if (!s.equals("")) {
                                             try {
                                                 progressStatus2 = (int) Float.parseFloat(s);
+                                                if (progressStatus2>maxForce)
+                                                    maxForce = progressStatus2;
                                             } catch (Exception e) {
                                                 Log.i("onReadSuccess", e.toString());
                                                 progressStatus2 = 0;

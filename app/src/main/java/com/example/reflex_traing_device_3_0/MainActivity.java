@@ -36,7 +36,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ActionBarDrawerToggle drawerToggle;
     ScrollView details;
     RelativeLayout addProfileToProceed;
-    CurveGraphView curveGraphView;
+    CurveGraphView curveGraphView1;
+    CurveGraphView curveGraphView2;
     PatientsDatabaseHelper DB;
     ImageButton addProfile;
     TextView welcomeText;
@@ -54,63 +55,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-
-        details =  findViewById(R.id.details);
-        addProfileToProceed = findViewById(R.id.addProfileToProceed);
-        DB = new PatientsDatabaseHelper(this);
-        statsDB = new ValuesDatabaseHelper(this);
-        if (DB.getdata().getCount()==0) {
-            details.setVisibility(View.INVISIBLE);
-            addProfileToProceed.setVisibility(View.VISIBLE);
-
-            addProfile = findViewById(R.id.addProfile);
-            addProfile.setOnClickListener(this);
-        }
-        else {
-            addProfileToProceed.setVisibility(View.INVISIBLE);
-            details.setVisibility(View.VISIBLE);
-
-            welcomeText = findViewById(R.id.welcomeMessage1);
-            welcomeText.setText("Welcome " + Utils.getActivePatientName(this));
-            View inflatedView = getLayoutInflater().inflate(R.layout.header, null);
-            headerTitle = (TextView) inflatedView.findViewById(R.id.header_txt);
-            headerTitle.setText(Utils.getActivePatientName(this));
-        }
-
-        curveGraphView = findViewById(R.id.cgv);
-
-        curveGraphView.configure(
-                new CurveGraphConfig.Builder(this)
-                        .setAxisColor(R.color.axis_color)                                       // Set number of values to be displayed in X ax
-                        .setVerticalGuideline(4)                                                // Set number of background guidelines to be shown.
-                        .setHorizontalGuideline(2)
-                        .setGuidelineColor(R.color.grey_200)                                    // Set color of the visible guidelines.
-                        .setNoDataMsg(" No Data ")                                              // Message when no data is provided to the view.
-                        .setxAxisScaleTextColor(R.color.white)                                  // Set X axis scale text color.
-                        .setyAxisScaleTextColor(R.color.white)                                  // Set Y axis scale text color
-                        .setAnimationDuration(2000)                                             // Set Animation Duration
-                        .build()
-        );
-
-        PointMap pointMap = new PointMap();
-        Cursor statsCursor = statsDB.getData(1);
-        for (int i=0; statsCursor.moveToNext(); i++){
-            Log.i("statsCursor", String.valueOf(statsCursor.getInt(1)));
-            pointMap.addPoint(i, statsCursor.getInt(1));
-        }
-
-        GraphData gd = GraphData.builder(this)
-                .setPointMap(pointMap)
-                .setGraphStroke(R.color.graph_start_color)
-                .setGraphGradient(R.color.graph_start_color, R.color.graph_end_color)
-                .build();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                curveGraphView.setData(statsCursor.getCount(), 900, gd);
-            }
-        }, 250);
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -166,12 +110,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         navigationView.bringToFront();
 
+        details =  findViewById(R.id.details);
+        addProfileToProceed = findViewById(R.id.addProfileToProceed);
+        DB = new PatientsDatabaseHelper(this);
+        statsDB = new ValuesDatabaseHelper(this);
+        if (DB.getdata().getCount()==0) {
+            details.setVisibility(View.INVISIBLE);
+            addProfileToProceed.setVisibility(View.VISIBLE);
+
+            addProfile = findViewById(R.id.addProfile);
+            addProfile.setOnClickListener(this);
+        }
+        else {
+            addProfileToProceed.setVisibility(View.INVISIBLE);
+            details.setVisibility(View.VISIBLE);
+
+            welcomeText = findViewById(R.id.welcomeMessage1);
+            welcomeText.setText("Welcome " + Utils.getActivePatientName(this));
+            View inflatedView = getLayoutInflater().inflate(R.layout.header, null);
+            headerTitle = (TextView) inflatedView.findViewById(R.id.header_txt);
+            headerTitle.setText(Utils.getActivePatientName(this));
+        }
+
         reflexCardView = findViewById(R.id.reflex_btn);
         strengthCardView = findViewById(R.id.strength_btn);
 
         reflexCardView.setOnClickListener(this);
         strengthCardView.setOnClickListener(this);
 
+        curveGraphView1 = findViewById(R.id.cgv);
+        updateCurveGraph(this, 1, curveGraphView1, 2000, 1);
+        curveGraphView2 = findViewById(R.id.cgv2);
+        updateCurveGraph(this, 2, curveGraphView2, 10000, 5);
+
+    }
+
+    private void updateCurveGraph(MainActivity mainActivity, int activity, CurveGraphView curveGraphView, int maxVal, int colIndex) {
+        curveGraphView.configure(
+                new CurveGraphConfig.Builder(mainActivity)
+                        .setAxisColor(R.color.axis_color)                                       // Set number of values to be displayed in X ax
+                        .setVerticalGuideline(4)                                                // Set number of background guidelines to be shown.
+                        .setHorizontalGuideline(2)
+                        .setGuidelineColor(R.color.grey_200)                                    // Set color of the visible guidelines.
+                        .setNoDataMsg("No Training Data")                                       // Message when no data is provided to the view.
+                        .setxAxisScaleTextColor(R.color.white)                                  // Set X axis scale text color.
+                        .setyAxisScaleTextColor(R.color.white)                                  // Set Y axis scale text color
+                        .setAnimationDuration(2000)                                             // Set Animation Duration
+                        .build()
+        );
+        PointMap pointMap = new PointMap();
+        Cursor statsCursor = statsDB.getData(activity);
+        if (statsCursor.getCount()>0) {
+            for (int i=0; statsCursor.moveToNext(); i++){
+                pointMap.addPoint(i, statsCursor.getInt(colIndex));
+            }
+
+            GraphData gd = GraphData.builder(mainActivity)
+                    .setPointMap(pointMap)
+                    .setGraphStroke(R.color.graph_start_color)
+                    .setGraphGradient(R.color.graph_start_color, R.color.graph_end_color)
+                    .build();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    curveGraphView.setData(statsCursor.getCount(), maxVal, gd);
+                }
+            }, 250);
+        } else {
+            curveGraphView.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void toReflexTrainingActivity() {

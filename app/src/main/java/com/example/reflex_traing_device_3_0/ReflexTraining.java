@@ -165,6 +165,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         Button playBD1 = this.findViewById(R.id.btnBD1);
         Button playBD2 = this.findViewById(R.id.btnBD2);
         Button playBD3 = this.findViewById(R.id.btnBD3);
+        Button playBD4 = this.findViewById(R.id.btnBD4);
 
         stActBtn.setOnClickListener(this);
         stopActBtn.setOnClickListener(this);
@@ -172,6 +173,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         playBD1.setOnClickListener(this);
         playBD2.setOnClickListener(this);
         playBD3.setOnClickListener(this);
+        playBD4.setOnClickListener(this);
 
     }
 
@@ -226,6 +228,10 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
             case R.id.btnBD3:
                 mp = MediaPlayer.create(this, R.raw.tom2);
                 localMusicButtonPressed = 3;
+                break;
+            case R.id.btnBD4:
+                mp = MediaPlayer.create(this, R.raw.cymbal8);
+                localMusicButtonPressed = 4;
                 break;
             case R.id.btnStartActivity:
                 if(!running) {
@@ -282,7 +288,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         running = true;
 
         int min = 1;
-        int max = 3;
+        int max = 4;
         int randomValGen = (int) (Math.random() * (max - min + 1) + min);
 
         currBtn = randomValGen;
@@ -321,6 +327,9 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                 break;
             case 3:
                 mProgressBar = findViewById(R.id.pgBar3);
+                break;
+            case 4:
+                mProgressBar = findViewById(R.id.pgBar4);
                 break;
             default:
                 mProgressBar = findViewById(R.id.pgBar1);
@@ -398,7 +407,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                 if (Utils.getCONNECTION_STATUS(currDevRead) == 0 ) {
                     currDevRead++;
                 }
-                if (currDevRead>2) currDevRead=0;
+                if (currDevRead>3) currDevRead=0;
                 if (correctBtnPress && !isWriting && !BLOCKINGVALS[currDevRead]) {
                     avgTime = (avgTime * (NUMBER_ITERATIONS - times) + (2000 - recMills)) / (NUMBER_ITERATIONS - times + 1);
                     mCountDownTimer.cancel();
@@ -455,6 +464,10 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
             case 3:
                 mp = MediaPlayer.create(this, R.raw.tom1);
                 localMusicButtonPressed = 3;
+                break;
+            case 4:
+                mp = MediaPlayer.create(this, R.raw.cymbal8);
+                localMusicButtonPressed = 4;
                 break;
             default:
                 Toast.makeText(this, "Sound Select Failed", Toast.LENGTH_SHORT).show();

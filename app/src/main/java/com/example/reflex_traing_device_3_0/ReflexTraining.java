@@ -9,8 +9,10 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -31,6 +33,8 @@ import com.clj.fastble.callback.BleWriteCallback;
 import com.clj.fastble.exception.BleException;
 import com.google.android.material.navigation.NavigationView;
 
+import soup.neumorphism.NeumorphImageButton;
+
 
 @SuppressLint("NonConstantResourceId")
 public class ReflexTraining extends AppCompatActivity implements View.OnClickListener {
@@ -43,7 +47,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     ActionBarDrawerToggle drawerToggle;
-
+    NeumorphImageButton patternBtn, randomBtn;
     ValuesDatabaseHelper DB;
 
     int times;
@@ -53,8 +57,9 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
     int NUMBER_ITERATIONS = 5;
     double avgTime;
     boolean running = false;
+    boolean randomOrPattern = false;
     boolean correctBtnPress = false;
-    boolean[] BLOCKINGVALS = {false, false, false};
+    boolean[] BLOCKINGVALS = {false, false, false, false};
     boolean isWriting = false;
     boolean isReading = false;
     private int rec_val = 0;
@@ -130,6 +135,8 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
 
         Button stActBtn = this.findViewById(R.id.btnStartActivity);
         Button stopActBtn = this.findViewById(R.id.btnStopActivity);
+        randomBtn = this.findViewById(R.id.randomBtn);
+        patternBtn = this.findViewById(R.id.patternBtn);
 
         //Future change?
         TextView mCurrentReps = findViewById(R.id.currReps);
@@ -169,6 +176,8 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
 
         stActBtn.setOnClickListener(this);
         stopActBtn.setOnClickListener(this);
+        randomBtn.setOnClickListener(this);
+        patternBtn.setOnClickListener(this);
 
         playBD1.setOnClickListener(this);
         playBD2.setOnClickListener(this);
@@ -245,6 +254,25 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                 times = 1;
                 stopReflexTraining();
                 break;
+            case R.id.randomBtn:
+                if (!randomOrPattern) {
+                    randomOrPattern = true;
+                    randomBtn = new NeumorphImageButton(new ContextThemeWrapper(this, R.style.neumorphImgBtnPressed));
+                    patternBtn = new NeumorphImageButton(new ContextThemeWrapper(this, R.style.neumorphImgBtn));
+                    TextView patternTxt = findViewById(R.id.patternTxt);
+                    patternTxt.setText("Pattern: OFF");
+                }
+                break;
+            case R.id.patternBtn:
+                if (randomOrPattern) {
+                    randomOrPattern = false;
+                    randomBtn = new NeumorphImageButton(new ContextThemeWrapper(this, R.style.neumorphImgBtn));
+                    patternBtn = new NeumorphImageButton(new ContextThemeWrapper(this, R.style.neumorphImgBtnPressed));
+                    TextView patternTxt = findViewById(R.id.patternTxt);
+                    patternTxt.setText("Pattern: ON");
+
+                }
+                break;
             default:
                 Toast.makeText(this, "Button Selection Failed", Toast.LENGTH_SHORT).show();
 
@@ -291,7 +319,10 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         int max = 4;
         int randomValGen = (int) (Math.random() * (max - min + 1) + min);
 
-        currBtn = randomValGen;
+        if (randomOrPattern)
+            currBtn = randomValGen;
+        else
+            currBtn = genPattern();
         if (Utils.getCONNECTION_STATUS(currBtn-1) == 1) {
             try {
                 Thread.sleep(100);
@@ -321,7 +352,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         }
 
         // select correct progress bar
-        switch (randomValGen) {
+        switch (currBtn) {
             case 2:
                 mProgressBar = findViewById(R.id.pgBar2);
                 break;
@@ -337,7 +368,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         }
         mProgressBar.setProgressDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.circular_progress_bar_active, null));
         mProgressBar.setProgress(100);
-        mCountDownTimer = new CountDownTimer(2000, 20) {
+        mCountDownTimer = new CountDownTimer(2000, 1) {
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -345,6 +376,7 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                 mProgressBar.setProgress((int) (((double) millisUntilFinished / 2000 * 100)));
                 recMills = millisUntilFinished;
 
+                if (currDevRead>3) currDevRead=0;
                 if (Utils.getCONNECTION_STATUS(currDevRead) == 1 && !BLOCKINGVALS[currDevRead] && !isWriting && !isReading) {
                     isReading = true;
                     BleManager.getInstance().read(
@@ -404,10 +436,9 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
                                 }
                             });
                 }
-                if (Utils.getCONNECTION_STATUS(currDevRead) == 0 ) {
+                if (Utils.getCONNECTION_STATUS(currDevRead) == 0){
                     currDevRead++;
                 }
-                if (currDevRead>3) currDevRead=0;
                 if (correctBtnPress && !isWriting && !BLOCKINGVALS[currDevRead]) {
                     avgTime = (avgTime * (NUMBER_ITERATIONS - times) + (2000 - recMills)) / (NUMBER_ITERATIONS - times + 1);
                     mCountDownTimer.cancel();
@@ -446,6 +477,11 @@ public class ReflexTraining extends AppCompatActivity implements View.OnClickLis
         };
         mCountDownTimer.start();
 
+    }
+
+    private int genPattern() {
+        int[] pattern1 = {1,4,2,4,3,4,2,4};
+        return pattern1[(NUMBER_ITERATIONS-times)%8];
     }
 
     private void playSound(int rec_val) {

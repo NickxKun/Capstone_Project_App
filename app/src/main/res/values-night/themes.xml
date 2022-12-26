@@ -27,6 +27,13 @@
         <item name="neumorph_shadowColorDark">#191B1E</item>
         <item name="neumorph_shadowColorLight">#30343a</item>
         <item name="android:tint">#d1d9e6</item>
+        <item name="neumorph_shapeType">flat</item>
+    </style>
+    <style name="neumorphImgBtnPressed" parent="Widget.Neumorph.ImageButton">
+        <item name="neumorph_shadowColorDark">#191B1E</item>
+        <item name="neumorph_shadowColorLight">#30343a</item>
+        <item name="android:tint">#d1d9e6</item>
+        <item name="neumorph_shapeType">basin</item>
     </style>
     <style name="neumorphBtn" parent="Widget.Neumorph.Button">
         <item name="neumorph_shadowColorDark">#191B1E</item>
